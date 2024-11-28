@@ -19,6 +19,7 @@ class CreatePostActivity : AppCompatActivity() {
 
         val etPostContent = findViewById<EditText>(R.id.etPostContent)
         val btnPublishPost = findViewById<Button>(R.id.btnPublishPost)
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
 
         btnPublishPost.setOnClickListener {
             val content = etPostContent.text.toString()
@@ -28,6 +29,15 @@ class CreatePostActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "Post cannot be empty", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        // Configurer la Toolbar
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+
+        // Gérer le clic sur la flèche de retour
+        toolbar.setNavigationOnClickListener {
+            finish()
         }
 
         observeViewModel()

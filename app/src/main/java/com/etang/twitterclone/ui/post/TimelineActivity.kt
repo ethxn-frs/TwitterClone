@@ -31,10 +31,14 @@ class TimelineActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
+        // Configurer Toolbar
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
         // Configurer FloatingActionButton
         val fabCreatePost = findViewById<FloatingActionButton>(R.id.fabCreatePost)
         fabCreatePost.setOnClickListener {
-            // Naviguer vers CreatePostActivity
+
             val intent = Intent(this, CreatePostActivity::class.java)
             startActivity(intent)
         }
@@ -42,7 +46,6 @@ class TimelineActivity : AppCompatActivity() {
         // Configurer SwipeRefreshLayout
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
         swipeRefreshLayout.setOnRefreshListener {
-            // Rafraîchir les posts
             viewModel.fetchPosts()
         }
 
