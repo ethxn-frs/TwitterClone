@@ -52,6 +52,7 @@
 
         <activity android:name=".pages.LoginActivity" />
         <activity android:name=".pages.HomeActivity"/>
+        <activity android:name=".pages.post.TimelineActivity"/>
 
     </application>
 
