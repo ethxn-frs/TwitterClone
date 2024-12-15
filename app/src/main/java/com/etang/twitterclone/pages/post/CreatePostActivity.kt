@@ -1,4 +1,4 @@
-package com.etang.twitterclone.ui.post
+package com.etang.twitterclone.pages.post
 
 import android.os.Bundle
 import android.widget.Button

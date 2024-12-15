@@ -1,4 +1,4 @@
-package com.etang.twitterclone.ui.post
+package com.etang.twitterclone.pages.post
 
 import android.content.Intent
 import android.os.Bundle

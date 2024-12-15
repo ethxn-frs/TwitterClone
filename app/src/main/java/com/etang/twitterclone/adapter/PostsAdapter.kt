@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.etang.twitterclone.R
-import com.etang.twitterclone.model.Post
+import com.etang.twitterclone.data.model.Post
 
 class PostsAdapter : RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
 

@@ -1,4 +1,4 @@
-package com.etang.twitterclone.model
+package com.etang.twitterclone.data.model
 
 data class Post(
     val id: Int,
