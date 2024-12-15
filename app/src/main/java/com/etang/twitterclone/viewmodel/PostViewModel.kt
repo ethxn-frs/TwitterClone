@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.etang.twitterclone.model.Post
-import com.etang.twitterclone.repository.PostRepository
+import com.etang.twitterclone.data.model.Post
+import com.etang.twitterclone.repositories.PostRepository
 import kotlinx.coroutines.launch
 
 class PostViewModel : ViewModel() {

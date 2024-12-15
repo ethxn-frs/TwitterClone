@@ -1,9 +1,9 @@
-package com.etang.twitterclone.repository
+package com.etang.twitterclone.repositories
 
 import android.util.Log
-import com.etang.twitterclone.api.TwitterApi
-import com.etang.twitterclone.dto.CreatePostRequest
-import com.etang.twitterclone.model.Post
+import com.etang.twitterclone.network.services.TwitterApi
+import com.etang.twitterclone.network.dto.CreatePostRequest
+import com.etang.twitterclone.data.model.Post
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

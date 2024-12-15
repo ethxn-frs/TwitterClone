@@ -1,4 +1,4 @@
-package com.etang.twitterclone.ui.main
+package com.etang.twitterclone.pages.main
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge

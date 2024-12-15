@@ -1,7 +1,7 @@
-package com.etang.twitterclone.api
+package com.etang.twitterclone.network.services
 
-import com.etang.twitterclone.dto.CreatePostRequest
-import com.etang.twitterclone.model.Post
+import com.etang.twitterclone.network.dto.CreatePostRequest
+import com.etang.twitterclone.data.model.Post
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET

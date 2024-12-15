@@ -1,4 +1,6 @@
-package com.etang.twitterclone.model
+package com.etang.twitterclone.data.model
+
+import java.io.Serializable
 
 data class User(
     val id: Int,
@@ -7,6 +9,6 @@ data class User(
     val username: String,
     val email: String,
     val birthDate: String,
-    val followersCount: Int = 0,
-    val followingCount: Int = 0
-)
+    val createdAt: String,
+    val updatedAt: String?
+): Serializable

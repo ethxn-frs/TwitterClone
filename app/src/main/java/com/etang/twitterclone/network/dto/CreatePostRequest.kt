@@ -1,4 +1,4 @@
-package com.etang.twitterclone.dto
+package com.etang.twitterclone.network.dto
 
 data class CreatePostRequest(
     val userId: Int,
