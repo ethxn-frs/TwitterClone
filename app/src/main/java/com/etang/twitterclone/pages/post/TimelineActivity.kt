@@ -3,6 +3,7 @@ package com.etang.twitterclone.pages.post
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -27,6 +28,15 @@ class TimelineActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_timeline)
+
+        // Accéder à l'inclusion du header
+        val headerLayout = findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.headerLayout)
+
+        // Récupérer le TextView du Header
+        // Récupérer le TextView à l'intérieur du header
+        val tvTitle = headerLayout.findViewById<TextView>(R.id.tvHeaderTitle)
+        tvTitle.text = "Post"
+
 
         val userResponse: LoginResponseDto? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getSerializableExtra("USER_DATA", LoginResponseDto::class.java)
