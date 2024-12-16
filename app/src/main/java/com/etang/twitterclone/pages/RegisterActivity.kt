@@ -37,6 +37,8 @@ class RegisterActivity: AppCompatActivity(), RegisterHandler{
         val birthDateInput = findViewById<EditText>(R.id.birthDateInput)
         val registerButton = findViewById<Button>(R.id.registerButton)
 
+        val loginRedirectionButton = findViewById<Button>(R.id.loginRedirectButton)
+
         registerViewModel.registrationSuccess.observe(this){ user ->
             if (user != null) {
                 Toast.makeText(this, "Bienvenue ${user}", Toast.LENGTH_SHORT).show()
@@ -85,6 +87,11 @@ class RegisterActivity: AppCompatActivity(), RegisterHandler{
             } catch (e: Exception) {
                 Toast.makeText(this, "Erreur : ${e.message}", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        loginRedirectionButton.setOnClickListener{
+            val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
         }
     }
     override fun displayRegisterPage() {
