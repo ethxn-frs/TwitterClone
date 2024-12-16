@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.etang.twitterclone.R
 import com.etang.twitterclone.pages.main.MainActivity
+import com.etang.twitterclone.pages.post.TimelineActivity
 import com.etang.twitterclone.viewmodel.LoginViewModel
 
 class LoginActivity:AppCompatActivity() {
@@ -34,7 +35,7 @@ class LoginActivity:AppCompatActivity() {
             if (user != null) {
                 Toast.makeText(this, "Bienvenue ${user.user.username}", Toast.LENGTH_SHORT).show()
 
-                val intent = Intent(this, HomeActivity::class.java)
+                val intent = Intent(this, TimelineActivity::class.java)
                 intent.putExtra("USER_DATA", user)
                 startActivity(intent)
                 finish()
