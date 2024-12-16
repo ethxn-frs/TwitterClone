@@ -12,16 +12,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.etang.twitterclone.R
 import com.etang.twitterclone.pages.main.MainActivity
+import com.etang.twitterclone.pages.post.TimelineActivity
+import com.etang.twitterclone.session.SessionManager
 import com.etang.twitterclone.viewmodel.LoginViewModel
 
 class LoginActivity:AppCompatActivity() {
     private lateinit var loginViewModel: LoginViewModel
+    private lateinit var sessionManager: SessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //enableEdgeToEdge()
         setContentView(R.layout.activity_login)
 
+        sessionManager = SessionManager(this)
         loginViewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
 
         val RegisterButton = findViewById<Button>(R.id.ButtonRegister)
@@ -34,7 +38,9 @@ class LoginActivity:AppCompatActivity() {
             if (user != null) {
                 Toast.makeText(this, "Bienvenue ${user.user.username}", Toast.LENGTH_SHORT).show()
 
-                val intent = Intent(this, HomeActivity::class.java)
+                sessionManager.saveUserSession(user.token, user.user)
+
+                val intent = Intent(this, TimelineActivity::class.java)
                 intent.putExtra("USER_DATA", user)
                 startActivity(intent)
                 finish()

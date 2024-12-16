@@ -5,14 +5,33 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.etang.twitterclone.R
+import com.etang.twitterclone.pages.post.TimelineActivity
+import com.etang.twitterclone.session.SessionManager
 
 class WelcomeActivity: AppCompatActivity() {
+    private lateinit var sessionManager: SessionManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_welcome)
 
         val loginButton = findViewById<Button>(R.id.loginButton)
         val registerButton = findViewById<Button>(R.id.registerButton)
+
+        sessionManager = SessionManager(this)
+
+        if (sessionManager.isLoggedIn()) {
+            // L'utilisateur est déjà connecté, redirection vers HomeActivity
+            val intent = Intent(this, TimelineActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+        /*else {
+            // L'utilisateur doit se connecter
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+        }*/
 
         // Redirige vers la page de connexion
         loginButton.setOnClickListener {

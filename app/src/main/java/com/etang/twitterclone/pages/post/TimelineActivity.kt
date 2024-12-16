@@ -1,7 +1,9 @@
 package com.etang.twitterclone.pages.post
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -9,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.etang.twitterclone.R
 import com.etang.twitterclone.adapter.PostsAdapter
+import com.etang.twitterclone.network.dto.auth_dto.LoginResponseDto
+import com.etang.twitterclone.session.SessionManager
 import com.etang.twitterclone.viewmodel.PostViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -23,6 +27,17 @@ class TimelineActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_timeline)
+
+        val userResponse: LoginResponseDto? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getSerializableExtra("USER_DATA", LoginResponseDto::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getSerializableExtra("USER_DATA") as? LoginResponseDto
+        }
+
+        userResponse?.let {
+            Toast.makeText(this, "Bienvenue ${it.user.username} !", Toast.LENGTH_SHORT).show()
+        }
 
         // Configurer RecyclerView
         recyclerView = findViewById(R.id.recyclerViewPosts)

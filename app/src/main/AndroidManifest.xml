@@ -54,6 +54,10 @@
         <activity android:name=".pages.HomeActivity"/>
         <activity android:name=".pages.post.TimelineActivity"/>
 
+        <activity
+            android:name=".pages.post.CreatePostActivity"
+            android:exported="true" />
+
     </application>
 
 
