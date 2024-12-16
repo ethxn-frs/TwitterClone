@@ -1,5 +1,6 @@
 package com.etang.twitterclone.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ class PostsAdapter : RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
 
     private val posts = mutableListOf<Post>()
 
+    @SuppressLint("NotifyDataSetChanged")
     fun submitList(newPosts: List<Post>) {
         posts.clear()
         posts.addAll(newPosts)
@@ -31,11 +33,15 @@ class PostsAdapter : RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
 
     class PostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvAuthor: TextView = itemView.findViewById(R.id.tvAuthor)
+        private val tvAuthorUsername: TextView = itemView.findViewById(R.id.tvAuthorUsername)
         private val tvContent: TextView = itemView.findViewById(R.id.tvContent)
         private val tvLikes: TextView = itemView.findViewById(R.id.tvLikes)
         private val tvComments: TextView = itemView.findViewById(R.id.tvComments)
 
+        @SuppressLint("SetTextI18n")
         fun bind(post: Post) {
+            tvAuthor.text = post.author.firstName + post.author.lastName
+            tvAuthorUsername.text = "@"+ post.author.username;
             tvAuthor.text = post.author.username
             tvContent.text = post.content
             tvLikes.text = "Likes: ${post.userHaveLiked.size}"

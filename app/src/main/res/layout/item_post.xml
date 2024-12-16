@@ -11,15 +11,37 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Auteur du post -->
-        <TextView
-            android:id="@+id/tvAuthor"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="4dp"
-            android:text="Author Name"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="horizontal">
+
+            <!-- Auteur du post -->
+            <TextView
+                android:id="@+id/tvAuthor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:paddingEnd="5dp"
+                android:text="@string/post_author_name"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <!-- Nom d'utilisateur de l'auteur -->
+            <TextView
+                android:id="@+id/tvAuthorUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="5dp"
+                android:paddingEnd="0dp"
+                android:text="@string/post_author_username"
+                android:textSize="12sp"
+                android:textStyle="italic" />
+
+        </LinearLayout>
+
 
         <!-- Contenu du post -->
         <TextView
@@ -27,26 +49,40 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="8dp"
-            android:text="Post content here..."
+            android:paddingStart="8dp"
+            android:paddingEnd="0dp"
+            android:text="@string/post_content"
             android:textSize="14sp" />
 
-        <!-- Nombre de likes -->
-        <TextView
-            android:id="@+id/tvLikes"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Likes: 0"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="12sp" />
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tvComments"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Comments: 0"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="12sp" />
+            <!-- Nombre de likes -->
+            <TextView
+                android:id="@+id/tvLikes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="@string/post_likes_count"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tvComments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:paddingEnd="0dp"
+                android:text="@string/post_comments_count"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="12sp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>
