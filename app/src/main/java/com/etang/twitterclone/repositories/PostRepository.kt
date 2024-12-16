@@ -1,29 +1,22 @@
 package com.etang.twitterclone.repositories
 
 import android.util.Log
-import com.etang.twitterclone.network.services.TwitterApi
+import com.etang.twitterclone.network.services.PostDataService
 import com.etang.twitterclone.network.dto.CreatePostRequest
 import com.etang.twitterclone.data.model.Post
+import com.etang.twitterclone.network.RetrofitClient
+import com.etang.twitterclone.network.services.AuthDataService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class PostRepository {
 
-    private val api: TwitterApi
-
-    init {
-        val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:3030")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        api = retrofit.create(TwitterApi::class.java)
-    }
+    private val postDataService = RetrofitClient.instance.create(PostDataService::class.java)
 
     suspend fun createPost(content: String, userId: Int, parentId: Int? = null): Boolean {
         return try {
             val request = CreatePostRequest(userId = userId, content = content, parentId = parentId)
-            val response = api.createPost(request)
+            val response = postDataService.createPost(request)
             if (response.isSuccessful) {
                 true
             } else {
@@ -38,7 +31,7 @@ class PostRepository {
 
     suspend fun getPosts(): List<Post> {
         return try {
-            val response = api.getPosts()
+            val response = postDataService.getPosts()
             if (response.isSuccessful) {
                 response.body() ?: emptyList()
             } else {
