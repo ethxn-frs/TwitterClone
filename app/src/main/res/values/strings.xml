@@ -3,8 +3,10 @@
     <string name="post_content">Post content here...</string>
     <string name="post_author_username">\@UserName</string>
     <string name="post_author_name">Author Name</string>
-    <string name="post_likes_count">Likes: 0</string>
-    <string name="post_comments_count">Comments: 0</string>
+    <string name="post_likes_count">0</string>
+    <string name="post_comments_count">0</string>
     <string name="like_button">Bouton permettant de liker un post</string>
     <string name="post_time_ago">·  18h</string>
+    <string name="share_button">Boutton permettant de partager un post</string>
+    <string name="comment_button">Bouton permettant de commenter un post</string>
 </resources>

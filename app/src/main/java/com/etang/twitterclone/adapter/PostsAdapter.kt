@@ -18,7 +18,8 @@ import java.util.concurrent.TimeUnit
 
 class PostsAdapter(
     private val sessionManager: SessionManager,
-    private val onLikeClicked: (postId: Int) -> Unit
+    private val onLikeClicked: (postId: Int) -> Unit,
+    private val onShareClicked: (post: Post) -> Unit
 ) : RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
 
     private val posts = mutableListOf<Post>()
@@ -31,16 +32,13 @@ class PostsAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
-
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_post, parent, false)
         return PostViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val currentUserId = sessionManager.getUserId();
-        holder.bind(posts[position], currentUserId) { postId ->
-            onLikeClicked(postId)
-        }
+        holder.bind(posts[position], currentUserId, onLikeClicked, onShareClicked)
     }
 
     override fun getItemCount(): Int = posts.size
@@ -50,15 +48,23 @@ class PostsAdapter(
         private val tvAuthorUsername: TextView = itemView.findViewById(R.id.tvAuthorUsername)
         private val tvContent: TextView = itemView.findViewById(R.id.tvContent)
         private val tvLikes: TextView = itemView.findViewById(R.id.tvLikes)
-        private val btnLike: ImageButton = itemView.findViewById(R.id.btnLike)
+        private val tvComments: TextView = itemView.findViewById(R.id.tvComments)
         private val tvTimeAgo: TextView = itemView.findViewById(R.id.tvTimeAgo)
+        private val btnLike: ImageButton = itemView.findViewById(R.id.btnLike)
+        private val btnShare: ImageButton = itemView.findViewById(R.id.btnShare)
 
         @SuppressLint("SetTextI18n")
-        fun bind(post: Post, currentUserId: Int, onLikeClicked: (postId: Int) -> Unit) {
+        fun bind(
+            post: Post,
+            currentUserId: Int,
+            onLikeClicked: (postId: Int) -> Unit,
+            onShareClicked: (post: Post) -> Unit
+        ) {
             tvAuthor.text = "${post.author.firstName} ${post.author.lastName}"
             tvAuthorUsername.text = "@${post.author.username}"
             tvContent.text = post.content
-            tvLikes.text = "Likes: ${post.userHaveLiked.size}"
+            tvLikes.text = "${post.userHaveLiked.size}"
+            tvComments.text = "${post.comments.size}"
             tvTimeAgo.text = "· ${formatTimeAgo(post.createdAt)}"
 
             val isLiked = post.userHaveLiked.any { it.id == currentUserId }
@@ -69,13 +75,17 @@ class PostsAdapter(
                 val newIsLiked = !isLiked
                 updateLikeButtonIcon(newIsLiked)
             }
+
+            btnShare.setOnClickListener {
+                onShareClicked(post)
+            }
         }
 
         private fun updateLikeButtonIcon(isLiked: Boolean) {
             if (isLiked) {
-                btnLike.setImageResource(R.drawable.baseline_heart_broken_24)
+                btnLike.setImageResource(R.drawable.ic_favorite_filled24px)
             } else {
-                btnLike.setImageResource(R.drawable.outline_heart_broken_24)
+                btnLike.setImageResource(R.drawable.ic_favorite_outlined24px)
             }
         }
     }

@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.etang.twitterclone.R
 import com.etang.twitterclone.adapter.PostsAdapter
+import com.etang.twitterclone.data.model.Post
 import com.etang.twitterclone.network.dto.auth_dto.LoginResponseDto
 import com.etang.twitterclone.session.SessionManager
 import com.etang.twitterclone.viewmodel.PostViewModel
@@ -55,10 +56,16 @@ class TimelineActivity : AppCompatActivity() {
 
         // Configurer RecyclerView
         recyclerView = findViewById(R.id.recyclerViewPosts)
-        adapter = PostsAdapter(sessionManager) { postId ->
-            val userId = sessionManager.getUserId();
-            viewModel.likePost(postId, userId)
-        }
+        adapter = PostsAdapter(
+            sessionManager = sessionManager,
+            onLikeClicked = { postId ->
+                val userId = sessionManager.getUserId()
+                viewModel.likePost(postId, userId)
+            },
+            onShareClicked = { post ->
+                sharePost(post)
+            }
+        )
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
@@ -99,5 +106,18 @@ class TimelineActivity : AppCompatActivity() {
                 Toast.makeText(this, "Failed to like the post.", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+
+    private fun sharePost(post: Post) {
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_SUBJECT, "Check out this tweet!")
+            putExtra(
+                Intent.EXTRA_TEXT,
+                "Check out this tweet by ${post.author.username}:\n\n${post.content}\n\nShared via TwitterClone"
+            )
+        }
+        startActivity(Intent.createChooser(shareIntent, "Share post via"))
     }
 }
