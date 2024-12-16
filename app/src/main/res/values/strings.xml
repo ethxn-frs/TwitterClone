@@ -5,4 +5,6 @@
     <string name="post_author_name">Author Name</string>
     <string name="post_likes_count">Likes: 0</string>
     <string name="post_comments_count">Comments: 0</string>
+    <string name="like_button">Bouton permettant de liker un post</string>
+    <string name="post_time_ago">·  18h</string>
 </resources>

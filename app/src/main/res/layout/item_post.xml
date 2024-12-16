@@ -35,8 +35,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingStart="5dp"
-                android:paddingEnd="0dp"
+                android:paddingEnd="5dp"
                 android:text="@string/post_author_username"
+                android:textSize="12sp"
+                android:textStyle="italic" />
+
+            <!-- Temps depuis la création du post -->
+            <TextView
+                android:id="@+id/tvTimeAgo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="5dp"
+                android:paddingEnd="0dp"
+                android:text="@string/post_time_ago"
                 android:textSize="12sp"
                 android:textStyle="italic" />
 
@@ -60,6 +71,16 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:orientation="horizontal">
+
+            <!-- Bouton pour liker -->
+            <ImageButton
+                android:id="@+id/btnLike"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/outline_heart_broken_24"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/like_button" />
+
 
             <!-- Nombre de likes -->
             <TextView

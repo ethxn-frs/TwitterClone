@@ -23,27 +23,31 @@ class TimelineActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: PostsAdapter
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var sessionManager: SessionManager
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_timeline)
 
+        sessionManager = SessionManager(this)
+
         // Accéder à l'inclusion du header
-        val headerLayout = findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.headerLayout)
+        val headerLayout =
+            findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.headerLayout)
 
         // Récupérer le TextView du Header
         // Récupérer le TextView à l'intérieur du header
         val tvTitle = headerLayout.findViewById<TextView>(R.id.tvHeaderTitle)
         tvTitle.text = "Post"
 
-
-        val userResponse: LoginResponseDto? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getSerializableExtra("USER_DATA", LoginResponseDto::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            intent.getSerializableExtra("USER_DATA") as? LoginResponseDto
-        }
+        val userResponse: LoginResponseDto? =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getSerializableExtra("USER_DATA", LoginResponseDto::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                intent.getSerializableExtra("USER_DATA") as? LoginResponseDto
+            }
 
         userResponse?.let {
             Toast.makeText(this, "Bienvenue ${it.user.username} !", Toast.LENGTH_SHORT).show()
@@ -51,7 +55,10 @@ class TimelineActivity : AppCompatActivity() {
 
         // Configurer RecyclerView
         recyclerView = findViewById(R.id.recyclerViewPosts)
-        adapter = PostsAdapter()
+        adapter = PostsAdapter(sessionManager) { postId ->
+            val userId = sessionManager.getUserId();
+            viewModel.likePost(postId, userId)
+        }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
@@ -82,6 +89,15 @@ class TimelineActivity : AppCompatActivity() {
         viewModel.posts.observe(this) { posts ->
             adapter.submitList(posts)
             swipeRefreshLayout.isRefreshing = false
+        }
+
+        viewModel.likeSuccess.observe(this) { success ->
+            if (success) {
+                Toast.makeText(this, "Post liked successfully!", Toast.LENGTH_SHORT).show()
+                viewModel.fetchPosts() // Rafraîchir la liste après un like
+            } else {
+                Toast.makeText(this, "Failed to like the post.", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }

@@ -15,15 +15,18 @@ class PostViewModel : ViewModel() {
     private val _postSuccess = MutableLiveData<Boolean>()
     val postSuccess: LiveData<Boolean> get() = _postSuccess
 
+    private val _posts = MutableLiveData<List<Post>>()
+    val posts: LiveData<List<Post>> get() = _posts
+
+    private val _likeSuccess = MutableLiveData<Boolean>()
+    val likeSuccess: LiveData<Boolean> get() = _likeSuccess
+
     fun createPost(userId: Int, content: String, parentId: Int? = null) {
         viewModelScope.launch {
             val result = repository.createPost(content, userId, parentId)
             _postSuccess.value = result
         }
     }
-
-    private val _posts = MutableLiveData<List<Post>>()
-    val posts: LiveData<List<Post>> get() = _posts
 
     fun fetchPosts() {
         viewModelScope.launch {
@@ -32,5 +35,11 @@ class PostViewModel : ViewModel() {
         }
     }
 
+    fun likePost(postId: Int, userId: Int) {
+        viewModelScope.launch {
+            val result = repository.likePost(postId, userId)
+            _likeSuccess.value = result
+        }
+    }
 
 }
