@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.PopupMenu
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.etang.twitterclone.R
 import com.etang.twitterclone.data.model.Post
@@ -50,8 +52,10 @@ class PostsAdapter(
         private val tvLikes: TextView = itemView.findViewById(R.id.tvLikes)
         private val tvComments: TextView = itemView.findViewById(R.id.tvComments)
         private val tvTimeAgo: TextView = itemView.findViewById(R.id.tvTimeAgo)
+        private val btnMoreActions: ImageButton = itemView.findViewById(R.id.btnMoreActions)
         private val btnLike: ImageButton = itemView.findViewById(R.id.btnLike)
         private val btnShare: ImageButton = itemView.findViewById(R.id.btnShare)
+
 
         @SuppressLint("SetTextI18n")
         fun bind(
@@ -69,6 +73,69 @@ class PostsAdapter(
 
             val isLiked = post.userHaveLiked.any { it.id == currentUserId }
             updateLikeButtonIcon(isLiked)
+
+            btnMoreActions.setOnClickListener { view ->
+                val popupMenu = PopupMenu(itemView.context, view)
+                popupMenu.menuInflater.inflate(R.menu.menu_post_actions, popupMenu.menu)
+
+                val authorMenu = popupMenu.menu.findItem(R.id.action_author_menu)
+                authorMenu.title = post.author.username
+
+                popupMenu.setOnMenuItemClickListener { menuItem ->
+                    when (menuItem.itemId) {
+                        R.id.action_report_post -> {
+                            // signaler un post
+                            Toast.makeText(itemView.context, "Post reported", Toast.LENGTH_SHORT)
+                                .show()
+                            true
+                        }
+
+                        R.id.action_report_illegal -> {
+                            // signaler un contenu illégal
+                            Toast.makeText(
+                                itemView.context,
+                                "Reported as EU illegal content",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            true
+                        }
+
+                        R.id.action_follow_author -> {
+                            //  suivre l'auteur
+                            Toast.makeText(
+                                itemView.context,
+                                "Followed ${post.author.username}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            true
+                        }
+
+                        R.id.action_mute_author -> {
+                            // mettre en sourdine l'auteur
+                            Toast.makeText(
+                                itemView.context,
+                                "Muted ${post.author.username}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            true
+                        }
+
+                        R.id.action_block_author -> {
+                            //  bloquer l'auteur
+                            Toast.makeText(
+                                itemView.context,
+                                "Blocked ${post.author.username}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            true
+                        }
+
+                        else -> false
+                    }
+                }
+
+                popupMenu.show()
+            }
 
             btnLike.setOnClickListener {
                 onLikeClicked(post.id)
