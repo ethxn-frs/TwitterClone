@@ -6,6 +6,7 @@ data class UserDto(
     val lastName: String,
     val username: String,
     val email: String,
+    val phoneNumber: String,
     val birthDate: String,
     val createdAt: String,
     val updatedAt: String?
