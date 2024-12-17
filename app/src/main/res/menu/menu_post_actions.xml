@@ -1,0 +1,28 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Option: Report post -->
+    <item
+        android:id="@+id/action_report_post"
+        android:title="Report Post" />
+
+    <!-- Option: Report EU illegal content -->
+    <item
+        android:id="@+id/action_report_illegal"
+        android:title="Report EU illegal content" />
+
+    <!-- Submenu for author-specific actions -->
+    <item
+        android:id="@+id/action_author_menu"
+        android:title="Author Actions">
+        <menu>
+            <item
+                android:id="@+id/action_follow_author"
+                android:title="Follow" />
+            <item
+                android:id="@+id/action_mute_author"
+                android:title="Mute" />
+            <item
+                android:id="@+id/action_block_author"
+                android:title="Block" />
+        </menu>
+    </item>
+</menu>
