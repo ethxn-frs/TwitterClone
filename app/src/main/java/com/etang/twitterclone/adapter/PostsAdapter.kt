@@ -5,15 +5,21 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.etang.twitterclone.R
 import com.etang.twitterclone.data.model.Post
 import com.etang.twitterclone.pages.post.PostDetailsActivity
 import com.etang.twitterclone.session.SessionManager
+import com.etang.twitterclone.viewmodel.PostViewModel
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -56,6 +62,7 @@ class PostsAdapter(
         private val tvTimeAgo: TextView = itemView.findViewById(R.id.tvTimeAgo)
         private val btnMoreActions: ImageButton = itemView.findViewById(R.id.btnMoreActions)
         private val btnLike: ImageButton = itemView.findViewById(R.id.btnLike)
+        private val btnComment: ImageButton = itemView.findViewById(R.id.btnComment)
         private val btnShare: ImageButton = itemView.findViewById(R.id.btnShare)
 
 
@@ -151,10 +158,13 @@ class PostsAdapter(
             }
 
             itemView.setOnClickListener {
-                System.out.println("id : " + post.id)
                 val intent = Intent(itemView.context, PostDetailsActivity::class.java)
                 intent.putExtra("POST_ID", post.id)
                 itemView.context.startActivity(intent)
+            }
+
+            btnComment.setOnClickListener {
+                showCommentBottomSheet(post.id)
             }
 
         }
@@ -164,6 +174,51 @@ class PostsAdapter(
                 btnLike.setImageResource(R.drawable.ic_favorite_filled24px)
             } else {
                 btnLike.setImageResource(R.drawable.ic_favorite_outlined24px)
+            }
+        }
+
+        private fun showCommentBottomSheet(postId: Int) {
+            // Initialisation du BottomSheetDialog
+            val bottomSheetDialog = BottomSheetDialog(itemView.context)
+            val view = LayoutInflater.from(itemView.context)
+                .inflate(R.layout.layout_bottom_sheet_comment, null)
+
+            val etComment = view.findViewById<EditText>(R.id.etComment)
+            val btnSubmitComment = view.findViewById<Button>(R.id.btnSubmitComment)
+
+            btnSubmitComment.setOnClickListener {
+                val commentText = etComment.text.toString().trim()
+                if (commentText.isNotEmpty()) {
+                    submitComment(postId, commentText)
+                    bottomSheetDialog.dismiss()
+                } else {
+                    Toast.makeText(itemView.context, "Comment cannot be empty", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+
+            bottomSheetDialog.setContentView(view)
+            bottomSheetDialog.show()
+        }
+
+        private fun submitComment(parentId: Int, contentText: String) {
+            val viewModel =
+                ViewModelProvider(itemView.context as AppCompatActivity)[PostViewModel::class.java]
+            val userId = sessionManager.getUserId()
+
+            viewModel.createPost(userId, contentText, parentId)
+
+            viewModel.postSuccess.observe(itemView.context as AppCompatActivity) { success ->
+                if (success) {
+                    Toast.makeText(
+                        itemView.context,
+                        "Comment added successfully!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    Toast.makeText(itemView.context, "Failed to add comment", Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
         }
     }
@@ -195,4 +250,6 @@ class PostsAdapter(
             "unknown"
         }
     }
+
+
 }
