@@ -26,4 +26,7 @@
     <string name="share_button">Boutton permettant de partager un post</string>
     <string name="comment_button">Bouton permettant de commenter un post</string>
     <string name="more_actions_button">Boutton permettant d\'ouvrir un dialogue avec toute les actions</string>
+    <string name="post_created_hour">18:55</string>
+    <string name="post_created_date">17/12/2024</string>
+    <string name="centerd_dott">·</string>
 </resources>
