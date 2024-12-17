@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.etang.twitterclone.R
 import com.etang.twitterclone.adapter.PostsAdapter
+import com.etang.twitterclone.data.model.Post
 import com.etang.twitterclone.network.dto.auth_dto.LoginResponseDto
 import com.etang.twitterclone.pages.ProfileActivity
 import com.etang.twitterclone.session.SessionManager
@@ -25,14 +26,18 @@ class TimelineActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: PostsAdapter
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var sessionManager: SessionManager
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_timeline)
 
+        sessionManager = SessionManager(this)
+
         // Accéder à l'inclusion du header
-        val headerLayout = findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.headerLayout)
+        val headerLayout =
+            findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.headerLayout)
 
         // Récupérer le TextView du Header
         val tvTitle = headerLayout.findViewById<TextView>(R.id.tvHeaderTitle)
@@ -54,7 +59,16 @@ class TimelineActivity : AppCompatActivity() {
 
         // Configurer RecyclerView
         recyclerView = findViewById(R.id.recyclerViewPosts)
-        adapter = PostsAdapter()
+        adapter = PostsAdapter(
+            sessionManager = sessionManager,
+            onLikeClicked = { postId ->
+                val userId = sessionManager.getUserId()
+                viewModel.likePost(postId, userId)
+            },
+            onShareClicked = { post ->
+                sharePost(post)
+            }
+        )
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
@@ -98,5 +112,27 @@ class TimelineActivity : AppCompatActivity() {
             adapter.submitList(posts)
             swipeRefreshLayout.isRefreshing = false
         }
+
+        viewModel.likeSuccess.observe(this) { success ->
+            if (success) {
+                Toast.makeText(this, "Post liked successfully!", Toast.LENGTH_SHORT).show()
+                viewModel.fetchPosts() // Rafraîchir la liste après un like
+            } else {
+                Toast.makeText(this, "Failed to like the post.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
+    private fun sharePost(post: Post) {
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_SUBJECT, "Check out this tweet!")
+            putExtra(
+                Intent.EXTRA_TEXT,
+                "Check out this tweet by ${post.author.username}:\n\n${post.content}\n\nShared via TwitterClone"
+            )
+        }
+        startActivity(Intent.createChooser(shareIntent, "Share post via"))
     }
 }
