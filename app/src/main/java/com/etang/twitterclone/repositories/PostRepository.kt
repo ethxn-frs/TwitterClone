@@ -1,13 +1,10 @@
 package com.etang.twitterclone.repositories
 
 import android.util.Log
-import com.etang.twitterclone.network.services.PostDataService
-import com.etang.twitterclone.network.dto.CreatePostRequest
 import com.etang.twitterclone.data.model.Post
 import com.etang.twitterclone.network.RetrofitClient
-import com.etang.twitterclone.network.services.AuthDataService
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.etang.twitterclone.network.dto.CreatePostRequest
+import com.etang.twitterclone.network.services.PostDataService
 
 class PostRepository {
 
@@ -42,5 +39,19 @@ class PostRepository {
         }
     }
 
+    suspend fun likePost(postId: Int, userId: Int): Boolean {
+        return try {
+            val response = postDataService.likePost(postId, mapOf("userId" to userId))
+            if (response.isSuccessful) {
+                true
+            } else {
+                Log.e("PostRepository", "Error: ${response.code()} - ${response.message()}")
+                false
+            }
+        } catch (e: Exception) {
+            Log.e("PostRepository", "Exception: ${e.message}", e)
+            false
+        }
+    }
 
 }
