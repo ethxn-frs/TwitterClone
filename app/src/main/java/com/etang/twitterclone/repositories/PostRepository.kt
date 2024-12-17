@@ -54,4 +54,19 @@ class PostRepository {
         }
     }
 
+    suspend fun getPostById(postId: Int): Post? {
+        return try {
+            val response = postDataService.getPostById(postId)
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                Log.e("PostRepository", "Error: ${response.code()} - ${response.message()}")
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("PostRepository", "Exception: ${e.message}", e)
+            null
+        }
+    }
+
 }

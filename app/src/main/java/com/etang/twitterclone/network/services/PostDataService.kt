@@ -24,5 +24,7 @@ interface PostDataService {
         @Path("id") postId: Int, @Body userId: Map<String, Int>
     ): Response<Void>
 
+    @GET("posts/{id}")
+    suspend fun getPostById(@Path("id") postId: Int): Response<Post>
 
 }

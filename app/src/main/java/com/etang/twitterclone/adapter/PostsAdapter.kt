@@ -1,6 +1,7 @@
 package com.etang.twitterclone.adapter
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.etang.twitterclone.R
 import com.etang.twitterclone.data.model.Post
+import com.etang.twitterclone.pages.post.PostDetailsActivity
 import com.etang.twitterclone.session.SessionManager
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -64,6 +66,7 @@ class PostsAdapter(
             onLikeClicked: (postId: Int) -> Unit,
             onShareClicked: (post: Post) -> Unit
         ) {
+            println("Post ID: ${post.id}")
             tvAuthor.text = "${post.author.firstName} ${post.author.lastName}"
             tvAuthorUsername.text = "@${post.author.username}"
             tvContent.text = post.content
@@ -146,6 +149,14 @@ class PostsAdapter(
             btnShare.setOnClickListener {
                 onShareClicked(post)
             }
+
+            itemView.setOnClickListener {
+                System.out.println("id : " + post.id)
+                val intent = Intent(itemView.context, PostDetailsActivity::class.java)
+                intent.putExtra("POST_ID", post.id)
+                itemView.context.startActivity(intent)
+            }
+
         }
 
         private fun updateLikeButtonIcon(isLiked: Boolean) {
