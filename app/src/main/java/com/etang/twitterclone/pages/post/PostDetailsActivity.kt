@@ -1,6 +1,9 @@
 package com.etang.twitterclone.pages.post
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.icu.text.SimpleDateFormat
+import android.icu.util.TimeZone
 import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.TextView
@@ -14,6 +17,7 @@ import com.etang.twitterclone.adapter.PostsAdapter
 import com.etang.twitterclone.data.model.Post
 import com.etang.twitterclone.session.SessionManager
 import com.etang.twitterclone.viewmodel.PostViewModel
+import java.util.Locale
 
 class PostDetailsActivity : AppCompatActivity() {
 
@@ -71,22 +75,16 @@ class PostDetailsActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun displayPostDetails() {
         findViewById<TextView>(R.id.tvAuthor).text =
-            post.author.firstName + " " + post.author.lastName
+            "${post.author.firstName} ${post.author.lastName}"
         findViewById<TextView>(R.id.tvAuthorUsername).text = "@${post.author.username}"
         findViewById<TextView>(R.id.tvContent).text = post.content
-        tvLikes.text = "${post.userHaveLiked.size}"
 
-        isLiked = post.userHaveLiked.any { it.id == sessionManager.getUserId() }
-        updateLikeButtonIcon(isLiked)
+        val (createdHour, createdDate) = formatDateTime(post.createdAt)
 
-        btnLike.setOnClickListener {
-            isLiked = !isLiked
-            updateLikeButtonIcon(isLiked)
-            likePost(post.id)
-            val currentLikes = tvLikes.text.toString().toInt()
-            tvLikes.text = if (isLiked) "${currentLikes + 1}" else "${currentLikes - 1}"
-        }
+        findViewById<TextView>(R.id.tvHCreatedHour).text = createdHour
+        findViewById<TextView>(R.id.tvHCreatedDate).text = createdDate
     }
+
 
     private fun loadComments() {
         commentsAdapter.submitList(post.comments)
@@ -98,7 +96,16 @@ class PostDetailsActivity : AppCompatActivity() {
     }
 
     private fun shareComment(comment: Post) {
-        // Implémenter la logique pour partager un commentaire
+        println(comment.content)
+        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_SUBJECT, "Check out this tweet!")
+            putExtra(
+                Intent.EXTRA_TEXT,
+                "Check out this tweet by ${comment.author.username}:\n\n${comment.content}\n\nShared via TwitterClone"
+            )
+        }
+        startActivity(Intent.createChooser(shareIntent, "Share post via"))
     }
 
     private fun updateLikeButtonIcon(isLiked: Boolean) {
@@ -126,4 +133,23 @@ class PostDetailsActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun formatDateTime(createdAt: String): Pair<String, String> {
+        return try {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+            inputFormat.timeZone = TimeZone.getTimeZone("UTC")
+
+            val hourFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+            val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+            val date = inputFormat.parse(createdAt)
+            val hour = hourFormat.format(date)
+            val formattedDate = dateFormat.format(date)
+
+            Pair(hour, formattedDate)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Pair("Unknown", "Unknown")
+        }
+    }
+
 }

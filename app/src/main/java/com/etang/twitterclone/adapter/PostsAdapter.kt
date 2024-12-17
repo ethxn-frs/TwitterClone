@@ -1,6 +1,7 @@
 package com.etang.twitterclone.adapter
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
@@ -11,15 +12,20 @@ import android.widget.ImageButton
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.etang.twitterclone.R
 import com.etang.twitterclone.data.model.Post
 import com.etang.twitterclone.pages.post.PostDetailsActivity
+import com.etang.twitterclone.repositories.PostRepository
 import com.etang.twitterclone.session.SessionManager
 import com.etang.twitterclone.viewmodel.PostViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -91,57 +97,74 @@ class PostsAdapter(
                 val authorMenu = popupMenu.menu.findItem(R.id.action_author_menu)
                 authorMenu.title = post.author.username
 
-                popupMenu.setOnMenuItemClickListener { menuItem ->
-                    when (menuItem.itemId) {
-                        R.id.action_report_post -> {
-                            // signaler un post
-                            Toast.makeText(itemView.context, "Post reported", Toast.LENGTH_SHORT)
-                                .show()
-                            true
-                        }
+                btnMoreActions.setOnClickListener { view ->
+                    val popupMenu = PopupMenu(itemView.context, view)
+                    popupMenu.menuInflater.inflate(R.menu.menu_post_actions, popupMenu.menu)
 
-                        R.id.action_report_illegal -> {
-                            // signaler un contenu illégal
-                            Toast.makeText(
-                                itemView.context,
-                                "Reported as EU illegal content",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            true
-                        }
+                    val authorMenu = popupMenu.menu.findItem(R.id.action_author_menu)
+                    authorMenu.title = post.author.username
 
-                        R.id.action_follow_author -> {
-                            //  suivre l'auteur
-                            Toast.makeText(
-                                itemView.context,
-                                "Followed ${post.author.username}",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            true
-                        }
+                    val deleteMenuItem = popupMenu.menu.findItem(R.id.action_delete_post)
+                    deleteMenuItem.isVisible = post.author.id == currentUserId
 
-                        R.id.action_mute_author -> {
-                            // mettre en sourdine l'auteur
-                            Toast.makeText(
-                                itemView.context,
-                                "Muted ${post.author.username}",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            true
-                        }
+                    popupMenu.setOnMenuItemClickListener { menuItem ->
+                        when (menuItem.itemId) {
+                            R.id.action_report_post -> {
+                                Toast.makeText(
+                                    itemView.context,
+                                    "Post reported",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                true
+                            }
 
-                        R.id.action_block_author -> {
-                            //  bloquer l'auteur
-                            Toast.makeText(
-                                itemView.context,
-                                "Blocked ${post.author.username}",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            true
-                        }
+                            R.id.action_report_illegal -> {
+                                Toast.makeText(
+                                    itemView.context,
+                                    "Reported as EU illegal content",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                true
+                            }
 
-                        else -> false
+                            R.id.action_follow_author -> {
+                                Toast.makeText(
+                                    itemView.context,
+                                    "Followed ${post.author.username}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                true
+                            }
+
+                            R.id.action_mute_author -> {
+                                Toast.makeText(
+                                    itemView.context,
+                                    "Muted ${post.author.username}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                true
+                            }
+
+                            R.id.action_block_author -> {
+                                Toast.makeText(
+                                    itemView.context,
+                                    "Blocked ${post.author.username}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                true
+                            }
+
+                            R.id.action_delete_post -> {
+                                // Afficher le dialog de confirmation
+                                showDeleteConfirmationDialog(post.id, itemView.context)
+                                true
+                            }
+
+                            else -> false
+                        }
                     }
+
+                    popupMenu.show()
                 }
 
                 popupMenu.show()
@@ -221,6 +244,25 @@ class PostsAdapter(
                 }
             }
         }
+
+        private fun showDeleteConfirmationDialog(postId: Int, context: Context) {
+            AlertDialog.Builder(context)
+                .setTitle("Delete Post")
+                .setMessage("Are you sure you want to delete this post?")
+                .setPositiveButton("Yes") { _, _ ->
+                    // Appel à la fonction pour supprimer le post
+                    deletePost(postId, context)
+                }
+                .setNegativeButton("No", null)
+                .show()
+        }
+
+        private fun deletePost(postId: Int, context: Context) {
+            CoroutineScope(Dispatchers.IO).launch {
+                PostRepository().deletePostById(postId)
+            }
+        }
+
     }
 
     fun formatTimeAgo(createdAt: String): String {
@@ -238,13 +280,13 @@ class PostsAdapter(
             val days = TimeUnit.MILLISECONDS.toDays(diffInMillis)
 
             when {
-                seconds < 60 -> "$seconds seconds ago"
-                minutes < 60 -> "$minutes minutes ago"
-                hours < 24 -> "$hours hours ago"
-                days < 7 -> "$days days ago"
-                days < 30 -> "${days / 7} weeks ago"
-                days < 365 -> "${days / 30} months ago"
-                else -> "${days / 365} years ago"
+                seconds < 60 -> "$seconds s"
+                minutes < 60 -> "$minutes m"
+                hours < 24 -> "$hours h"
+                days < 7 -> "$days d"
+                days < 30 -> "${days / 7} w"
+                days < 365 -> "${days / 30} m"
+                else -> "${days / 365} y"
             }
         } catch (e: Exception) {
             "unknown"

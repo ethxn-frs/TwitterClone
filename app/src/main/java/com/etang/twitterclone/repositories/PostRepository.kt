@@ -69,4 +69,12 @@ class PostRepository {
         }
     }
 
+    suspend fun deletePostById(postId: Int) {
+        try {
+            postDataService.deletePostById(postId)
+        } catch (e: Exception) {
+            Log.e("PostRepository", "Exception: ${e.message}", e)
+        }
+    }
+
 }

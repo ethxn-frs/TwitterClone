@@ -27,4 +27,7 @@ interface PostDataService {
     @GET("posts/{id}")
     suspend fun getPostById(@Path("id") postId: Int): Response<Post>
 
+    @PUT("posts/{id}/delete")
+    suspend fun deletePostById(@Path("id") postId: Int): Void
+
 }
