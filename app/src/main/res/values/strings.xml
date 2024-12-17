@@ -5,4 +5,20 @@
     <string name="post_author_name">Author Name</string>
     <string name="post_likes_count">Likes: 0</string>
     <string name="post_comments_count">Comments: 0</string>
+    <string name="param_tres">Paramètres</string>
+    <string name="notifications">Notifications</string>
+    <string name="compte">Compte</string>
+    <string name="supprimer">Supprimer</string>
+    <string name="mode">Mode</string>
+    <string name="se_d_connecter">Se Déconnecter</string>
+    <string name="informations_personnelles">Informations personnelles</string>
+    <string name="modifier_photo">Modifier photo</string>
+    <string name="modifier_la_photo_de_profile">Modifier la photo de profile</string>
+    <string name="photo_de_profil">Photo de profil</string>
+    <string name="nom_utilisateur">Nom utilisateur :</string>
+    <string name="nom_pr_noms">Nom Prénoms :</string>
+    <string name="t_l_phone">Téléphone :</string>
+    <string name="email">Email :</string>
+    <string name="retour" />
+    <string name="parametres" />
 </resources>

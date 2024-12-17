@@ -3,6 +3,7 @@ package com.etang.twitterclone.pages.post
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -13,6 +14,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.etang.twitterclone.R
 import com.etang.twitterclone.adapter.PostsAdapter
 import com.etang.twitterclone.network.dto.auth_dto.LoginResponseDto
+import com.etang.twitterclone.pages.ProfileActivity
 import com.etang.twitterclone.session.SessionManager
 import com.etang.twitterclone.viewmodel.PostViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -33,9 +35,10 @@ class TimelineActivity : AppCompatActivity() {
         val headerLayout = findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.headerLayout)
 
         // Récupérer le TextView du Header
-        // Récupérer le TextView à l'intérieur du header
         val tvTitle = headerLayout.findViewById<TextView>(R.id.tvHeaderTitle)
         tvTitle.text = "Post"
+
+        val ivSettings = headerLayout.findViewById<ImageView>(R.id.ivSettings)
 
 
         val userResponse: LoginResponseDto? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -76,7 +79,19 @@ class TimelineActivity : AppCompatActivity() {
 
         observeViewModel()
         viewModel.fetchPosts()
+
+
+        ivSettings.setOnClickListener {
+            val intent = Intent(this, ProfileActivity::class.java)
+            startActivity(intent)
+        }
     }
+
+    override fun startActivity(intent: Intent?) {
+        super.startActivity(intent)
+        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+    }
+
 
     private fun observeViewModel() {
         viewModel.posts.observe(this) { posts ->
