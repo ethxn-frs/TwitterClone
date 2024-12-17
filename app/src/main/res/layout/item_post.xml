@@ -121,6 +121,12 @@
                 android:textColor="@android:color/darker_gray"
                 android:textSize="14sp" />
 
+            <!-- Espace flexible pour pousser le bouton à la fin -->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
             <!-- Bouton pour partager -->
             <ImageButton
                 android:id="@+id/btnShare"
