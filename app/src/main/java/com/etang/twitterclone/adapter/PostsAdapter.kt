@@ -79,6 +79,7 @@ class PostsAdapter(
             btnShare.setOnClickListener {
                 onShareClicked(post)
             }
+
         }
 
         private fun updateLikeButtonIcon(isLiked: Boolean) {

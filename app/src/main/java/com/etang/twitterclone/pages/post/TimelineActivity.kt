@@ -15,9 +15,12 @@ import com.etang.twitterclone.R
 import com.etang.twitterclone.adapter.PostsAdapter
 import com.etang.twitterclone.data.model.Post
 import com.etang.twitterclone.network.dto.auth_dto.LoginResponseDto
+import com.etang.twitterclone.pages.ConversationsActivity
+import com.etang.twitterclone.pages.MessagesActivity
 import com.etang.twitterclone.pages.ProfileActivity
 import com.etang.twitterclone.session.SessionManager
 import com.etang.twitterclone.viewmodel.PostViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class TimelineActivity : AppCompatActivity() {
@@ -67,7 +70,7 @@ class TimelineActivity : AppCompatActivity() {
             },
             onShareClicked = { post ->
                 sharePost(post)
-            }
+            },
         )
 
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -83,6 +86,21 @@ class TimelineActivity : AppCompatActivity() {
 
             val intent = Intent(this, CreatePostActivity::class.java)
             startActivity(intent)
+        }
+        //Configurer le BottomNavigationView
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigationView.setOnNavigationItemSelectedListener { item->
+            when(item.itemId){
+                R.id.navigation_home -> {
+                    true
+                }
+                R.id.navigation_messages->{
+                    val intent = Intent(this, ConversationsActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                else -> false
+            }
         }
 
         // Configurer SwipeRefreshLayout
