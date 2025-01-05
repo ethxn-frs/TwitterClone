@@ -59,6 +59,9 @@
             android:name=".pages.post.CreatePostActivity"
             android:exported="true" />
 
+        <activity android:name=".pages.settings.SettingsActivity"/>
+        <activity android:name=".pages.menu.SideMenuActivity"/>
+
     </application>
 
 

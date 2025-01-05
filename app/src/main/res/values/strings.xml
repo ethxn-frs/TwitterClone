@@ -19,6 +19,12 @@
     <string name="nom_pr_noms">Nom Prénoms :</string>
     <string name="t_l_phone">Téléphone :</string>
     <string name="email">Email :</string>
+    <string name="user_name_format">%1$s %2$s</string>
+    <string name="user_handle_format">@%1$s</string>
+    <string name="icon_description">Icône pour le paramètre</string>
+    <string name="arrow_description">description pour le paramètre</string>
     <string name="retour" />
     <string name="parametres" />
+    <string name="drawer_open">Ouvrir le menu</string>
+    <string name="drawer_close">Fermer le menu</string>
 </resources>

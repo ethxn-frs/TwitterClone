@@ -1,0 +1,133 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/side_menu_principal"
+    android:layout_width="280dp"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    android:padding="16dp">
+
+    <!-- Profil Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="16dp">
+
+        <ImageView
+            android:id="@+id/ivProfileImage"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@drawable/ic_profile"
+            android:contentDescription="Profile Picture"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tvUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="hector"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/tvUserHandle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="berihector15"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/tvFollowers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="6 Abonnements   1 Abonné"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp" />
+    </LinearLayout>
+
+    <!-- RecyclerView pour les éléments du menu -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewMenu"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false" />
+
+    <!-- Footer -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="16dp"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_settings_24px"
+            android:contentDescription="Réglages" />
+
+        <TextView
+            android:id="@+id/parameter_and_confidentiality"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Réglages et confidentialité"
+            android:textSize="16sp"
+            android:layout_marginStart="16dp"
+            android:textColor="@android:color/black" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="16dp"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_settings_24px"
+            android:contentDescription="Réglages" />
+
+        <TextView
+            android:id="@+id/parameter_help"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Réglages et confidentialité"
+            android:textSize="16sp"
+            android:layout_marginStart="16dp"
+            android:textColor="@android:color/black" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="16dp"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_settings_24px"
+            android:contentDescription="Réglages" />
+
+        <TextView
+            android:id="@+id/parameter_achat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Réglages et confidentialité"
+            android:textSize="16sp"
+            android:layout_marginStart="16dp"
+            android:textColor="@android:color/black" />
+    </LinearLayout>
+
+</LinearLayout>
