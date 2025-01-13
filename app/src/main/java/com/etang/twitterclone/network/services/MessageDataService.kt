@@ -12,7 +12,7 @@ interface MessageDataService {
     @GET("messages/conversation/{id}")
     suspend fun getMessagesInConversation(
         @Path("id") conversationId: Int
-    ):Response<List<Message>>
+    ): Response<List<Message>>
 
     @GET("messages/{id}")
     suspend fun getMessageById(

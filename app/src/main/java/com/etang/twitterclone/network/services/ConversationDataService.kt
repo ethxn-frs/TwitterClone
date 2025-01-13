@@ -1,6 +1,6 @@
 package com.etang.twitterclone.network.services
+
 import com.etang.twitterclone.data.model.Conversation
-import com.etang.twitterclone.network.dto.CreatePostRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -8,28 +8,28 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface ConversationDataService {
-    @POST("conversations")
+    @POST("/conversations")
     suspend fun createConversation(
         @Body request: CreateConversationRequest
     ): Response<Conversation>
 
-    @GET("conversations/user/{id}")
+    @GET("/conversations/user/{id}")
     suspend fun getUserConversations(
         @Path("id") userId: Int
     ): Response<List<Conversation>>
 
-    @POST("conversations/{conversationId}/remove-user")
+    @POST("/conversations/{conversationId}/remove-user")
     suspend fun removeUserFromConversation(
         @Path("conversationId") conversationId: Int,
         @Body request: UserConversationRequest
     ): Response<Unit>
 
-    @GET("conversations/{id}")
+    @GET("/conversations/{id}")
     suspend fun getConversationById(
         @Path("id") conversationId: Int
-    ):Response<Conversation>
+    ): Response<Conversation>
 
-    @GET("conversations")
+    @GET("/conversations")
     suspend fun getConversations(): Response<List<Conversation>>
 }
 
