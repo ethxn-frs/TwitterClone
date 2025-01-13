@@ -35,10 +35,12 @@ import java.util.concurrent.TimeUnit
 class PostsAdapter(
     private val sessionManager: SessionManager,
     private val onLikeClicked: (postId: Int) -> Unit,
-    private val onShareClicked: (post: Post) -> Unit
+    private val onShareClicked: (post: Post) -> Unit,
+    private val onPostClicked: (postId: Int) -> Unit
 ) : RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
 
-    private val posts = mutableListOf<Post>()
+
+    val posts = mutableListOf<Post>()
 
     @SuppressLint("NotifyDataSetChanged")
     fun submitList(newPosts: List<Post>) {
@@ -66,6 +68,7 @@ class PostsAdapter(
         private val tvLikes: TextView = itemView.findViewById(R.id.tvLikes)
         private val tvComments: TextView = itemView.findViewById(R.id.tvComments)
         private val tvTimeAgo: TextView = itemView.findViewById(R.id.tvTimeAgo)
+        private val tvReplyingTo: TextView = itemView.findViewById(R.id.tvReplyingTo)
         private val btnMoreActions: ImageButton = itemView.findViewById(R.id.btnMoreActions)
         private val btnLike: ImageButton = itemView.findViewById(R.id.btnLike)
         private val btnComment: ImageButton = itemView.findViewById(R.id.btnComment)
@@ -86,6 +89,13 @@ class PostsAdapter(
             tvLikes.text = "${post.userHaveLiked.size}"
             tvComments.text = "${post.comments.size}"
             tvTimeAgo.text = "· ${formatTimeAgo(post.createdAt)}"
+
+            if (post.parentPost?.author != null) {
+                tvReplyingTo.visibility = View.VISIBLE;
+                tvReplyingTo.text = "Replying to @${post.parentPost.author.username}";
+            } else {
+                tvReplyingTo.visibility = View.GONE;
+            }
 
             val isLiked = post.userHaveLiked.any { it.id == currentUserId }
             updateLikeButtonIcon(isLiked)
@@ -170,6 +180,10 @@ class PostsAdapter(
                 popupMenu.show()
             }
 
+            itemView.setOnClickListener {
+                onPostClicked(post.id)
+            }
+
             btnLike.setOnClickListener {
                 onLikeClicked(post.id)
                 val newIsLiked = !isLiked
@@ -183,6 +197,7 @@ class PostsAdapter(
             itemView.setOnClickListener {
                 val intent = Intent(itemView.context, PostDetailsActivity::class.java)
                 intent.putExtra("POST_ID", post.id)
+                intent.putExtra("POST_IS_LIKED", isLiked)
                 itemView.context.startActivity(intent)
             }
 

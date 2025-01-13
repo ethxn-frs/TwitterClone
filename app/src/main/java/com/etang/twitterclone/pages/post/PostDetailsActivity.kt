@@ -5,6 +5,7 @@ import android.content.Intent
 import android.icu.text.SimpleDateFormat
 import android.icu.util.TimeZone
 import android.os.Bundle
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
@@ -27,9 +28,10 @@ class PostDetailsActivity : AppCompatActivity() {
     private lateinit var post: Post
     private lateinit var btnLike: ImageButton
     private lateinit var tvLikes: TextView
+    private lateinit var etComment: EditText
+    private lateinit var btnSubmitComment: ImageButton
     private var isLiked: Boolean = false
     private val viewModel: PostViewModel by viewModels()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,26 +39,72 @@ class PostDetailsActivity : AppCompatActivity() {
 
         sessionManager = SessionManager(this)
 
+        // Initialisez les vues ici
+        btnLike = findViewById(R.id.btnLike)
+        tvLikes = findViewById(R.id.tvLikes)
+        etComment = findViewById(R.id.etComment)
+        btnSubmitComment = findViewById(R.id.btnSubmitComment)
+        recyclerViewComments = findViewById(R.id.recyclerViewComments)
+
+        // Récupérez l'état initial du post
         val postId = intent.getIntExtra("POST_ID", -1)
         if (postId == -1) {
             finish()
             return
         }
 
-        recyclerViewComments = findViewById(R.id.recyclerViewComments)
+        isLiked = intent.getBooleanExtra("POST_IS_LIKED", false)
+        updateLikeButtonIcon(isLiked)
+
+        btnLike.setOnClickListener {
+            isLiked = !isLiked
+            updateLikeButtonIcon(isLiked)
+            likePost(postId)
+        }
+
+        btnSubmitComment.setOnClickListener {
+            val commentText = etComment.text.toString().trim()
+            if (commentText.isNotEmpty()) {
+                addComment(postId, commentText)
+                etComment.text.clear()
+            } else {
+                Toast.makeText(this, "Comment cannot be empty", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         commentsAdapter = PostsAdapter(
             sessionManager,
             onLikeClicked = { postId -> likeComment(postId) },
-            onShareClicked = { comment -> shareComment(comment) }
+            onShareClicked = { comment -> shareComment(comment) },
+            onPostClicked = { postId -> }
         )
         recyclerViewComments.layoutManager = LinearLayoutManager(this)
         recyclerViewComments.adapter = commentsAdapter
 
-        btnLike = findViewById(R.id.btnLike)
-        tvLikes = findViewById(R.id.tvLikes)
-
         observePostDetails()
         viewModel.fetchPostById(postId)
+    }
+
+    private fun addComment(postId: Int, contentText: String) {
+        val userId = sessionManager.getUserId()
+        viewModel.createPost(userId, contentText, postId)
+
+        viewModel.postSuccess.observe(this) { success ->
+            if (success) {
+                Toast.makeText(this, "Comment added successfully!", Toast.LENGTH_SHORT).show()
+                viewModel.fetchPostById(postId)
+            } else {
+                Toast.makeText(this, "Failed to add comment.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    override fun onBackPressed() {
+        val intent = Intent()
+        intent.putExtra("POST_ID", post.id)
+        intent.putExtra("POST_IS_LIKED", isLiked)
+        setResult(RESULT_OK, intent)
+        super.onBackPressed()
     }
 
     private fun observePostDetails() {
@@ -85,18 +133,15 @@ class PostDetailsActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.tvHCreatedDate).text = createdDate
     }
 
-
     private fun loadComments() {
         commentsAdapter.submitList(post.comments)
     }
 
     private fun likeComment(postId: Int) {
-        // Implémenter la logique pour liker un commentaire
-        // Par exemple, appeler une API pour liker le commentaire
+        // Implémentez la logique pour liker un commentaire
     }
 
     private fun shareComment(comment: Post) {
-        println(comment.content)
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
             putExtra(Intent.EXTRA_SUBJECT, "Check out this tweet!")
@@ -127,7 +172,6 @@ class PostDetailsActivity : AppCompatActivity() {
                 Toast.makeText(this, "Post liked successfully!", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, "Failed to like the post.", Toast.LENGTH_SHORT).show()
-                // Revenir à l'état initial en cas d'erreur
                 isLiked = !isLiked
                 updateLikeButtonIcon(isLiked)
             }
@@ -151,5 +195,4 @@ class PostDetailsActivity : AppCompatActivity() {
             Pair("Unknown", "Unknown")
         }
     }
-
 }

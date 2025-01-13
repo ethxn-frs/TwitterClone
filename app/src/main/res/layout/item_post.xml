@@ -64,6 +64,17 @@
                 android:src="@drawable/ic_more_horizontal" />
         </LinearLayout>
 
+        <!-- Répondre à l'auteur -->
+        <TextView
+            android:id="@+id/tvReplyingTo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
+
         <!-- Contenu du post -->
         <TextView
             android:id="@+id/tvContent"
