@@ -16,9 +16,11 @@ import com.etang.twitterclone.R
 import com.etang.twitterclone.adapter.PostsAdapter
 import com.etang.twitterclone.data.model.Post
 import com.etang.twitterclone.network.dto.auth_dto.LoginResponseDto
+import com.etang.twitterclone.pages.ConversationsActivity
 import com.etang.twitterclone.pages.ProfileActivity
 import com.etang.twitterclone.session.SessionManager
 import com.etang.twitterclone.viewmodel.PostViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class TimelineActivity : AppCompatActivity() {
@@ -87,19 +89,15 @@ class TimelineActivity : AppCompatActivity() {
             },
             onShareClicked = { post ->
                 sharePost(post)
-            }
-        ){ postId ->
-            openPostDetails(postId)
-        }
+            },
+        )
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
-        // Configurer Toolbar
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        // Configurer FloatingActionButton
         val fabCreatePost = findViewById<FloatingActionButton>(R.id.fabCreatePost)
         fabCreatePost.setOnClickListener {
 
@@ -107,7 +105,23 @@ class TimelineActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // Configurer SwipeRefreshLayout
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_home -> {
+                    true
+                }
+
+                R.id.navigation_messages -> {
+                    val intent = Intent(this, ConversationsActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+
+                else -> false
+            }
+        }
+
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
         swipeRefreshLayout.setOnRefreshListener {
             viewModel.fetchPosts()

@@ -5,7 +5,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-    private val BASE_URL = "http://10.0.2.2:3030/"
+    private val BASE_URL = "http://10.0.2.2:3030"
 
     private val okHttpClient = OkHttpClient.Builder().build()
 
@@ -14,4 +14,5 @@ object RetrofitClient {
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build();
+
 }

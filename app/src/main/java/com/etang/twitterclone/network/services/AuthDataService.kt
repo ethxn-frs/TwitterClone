@@ -1,6 +1,5 @@
 package com.etang.twitterclone.network.services
 
-import com.etang.twitterclone.data.model.auth.LoginResponse
 import com.etang.twitterclone.network.dto.auth_dto.LoginDto
 import com.etang.twitterclone.network.dto.auth_dto.LoginResponseDto
 import com.etang.twitterclone.network.dto.auth_dto.RegisterDto
@@ -23,5 +22,5 @@ interface AuthDataService {
 
     @Headers("Content-Type: application/json")
     @POST("signup")
-    fun signup(@Body request: RegisterDto):Call<RegisterResponseDto>
+    fun signup(@Body request: RegisterDto): Call<RegisterResponseDto>
 }
