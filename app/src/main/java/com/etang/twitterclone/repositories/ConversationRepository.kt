@@ -1,10 +1,10 @@
 package com.etang.twitterclone.repositories
 
 import com.etang.twitterclone.data.model.Conversation
-import com.etang.twitterclone.network.services.AddUserToConversationRequest
 import com.etang.twitterclone.network.services.ConversationDataService
 import com.etang.twitterclone.network.services.CreateConversationRequest
-import com.etang.twitterclone.network.services.RemoveUserFromConversationRequest
+import com.etang.twitterclone.network.services.UserConversationRequest
+
 
 class ConversationRepository(private val service: ConversationDataService) {
     suspend fun createConversation(creatorId: Int, participantIds: List<Int>): Conversation{
@@ -26,7 +26,7 @@ class ConversationRepository(private val service: ConversationDataService) {
     }
 
     suspend fun removeUserFromConversation(conversationId: Int, userId: Int){
-        val request = RemoveUserFromConversationRequest(userId)
+        val request = UserConversationRequest(userId)
         val response = service.removeUserFromConversation(conversationId, request)
         if(!response.isSuccessful){
             throw Exception("Failed to remove user from conversation")
