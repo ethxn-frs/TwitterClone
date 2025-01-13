@@ -16,7 +16,7 @@ class ConversationRepository(private val service: ConversationDataService) {
             throw Exception("Failed to create conversation")
         }
     }
-    suspend fun getUserConversation(userId: Int): List<Conversation>{
+    suspend fun getUserConversations(userId: Int): List<Conversation>{
         val response = service.getUserConversations(userId)
         if(response.isSuccessful){
             return response.body()!!

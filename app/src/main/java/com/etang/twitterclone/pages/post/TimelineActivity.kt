@@ -16,7 +16,6 @@ import com.etang.twitterclone.adapter.PostsAdapter
 import com.etang.twitterclone.data.model.Post
 import com.etang.twitterclone.network.dto.auth_dto.LoginResponseDto
 import com.etang.twitterclone.pages.ConversationsActivity
-import com.etang.twitterclone.pages.MessagesActivity
 import com.etang.twitterclone.pages.ProfileActivity
 import com.etang.twitterclone.session.SessionManager
 import com.etang.twitterclone.viewmodel.PostViewModel
@@ -49,12 +48,13 @@ class TimelineActivity : AppCompatActivity() {
         val ivSettings = headerLayout.findViewById<ImageView>(R.id.ivSettings)
 
 
-        val userResponse: LoginResponseDto? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getSerializableExtra("USER_DATA", LoginResponseDto::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            intent.getSerializableExtra("USER_DATA") as? LoginResponseDto
-        }
+        val userResponse: LoginResponseDto? =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getSerializableExtra("USER_DATA", LoginResponseDto::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                intent.getSerializableExtra("USER_DATA") as? LoginResponseDto
+            }
 
         userResponse?.let {
             Toast.makeText(this, "Bienvenue ${it.user.username} !", Toast.LENGTH_SHORT).show()
@@ -76,34 +76,33 @@ class TimelineActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
-        // Configurer Toolbar
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
 
-        // Configurer FloatingActionButton
         val fabCreatePost = findViewById<FloatingActionButton>(R.id.fabCreatePost)
         fabCreatePost.setOnClickListener {
 
             val intent = Intent(this, CreatePostActivity::class.java)
             startActivity(intent)
         }
-        //Configurer le BottomNavigationView
+
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        bottomNavigationView.setOnNavigationItemSelectedListener { item->
-            when(item.itemId){
+        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
                 R.id.navigation_home -> {
                     true
                 }
-                R.id.navigation_messages->{
+
+                R.id.navigation_messages -> {
                     val intent = Intent(this, ConversationsActivity::class.java)
                     startActivity(intent)
                     true
                 }
+
                 else -> false
             }
         }
 
-        // Configurer SwipeRefreshLayout
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
         swipeRefreshLayout.setOnRefreshListener {
             viewModel.fetchPosts()

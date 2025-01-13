@@ -3,45 +3,62 @@ package com.etang.twitterclone.pages
 import ConversationsAdapter
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModel
+import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.etang.twitterclone.R
+import com.etang.twitterclone.network.RetrofitClient
+import com.etang.twitterclone.network.services.ConversationDataService
+import com.etang.twitterclone.repositories.ConversationRepository
 import com.etang.twitterclone.viewmodel.ConversationViewModel
+import com.etang.twitterclone.viewmodel.ConversationViewModelFactory
+import com.etang.twitterclone.network.services.RetrofitInstance
 
 class ConversationsActivity : AppCompatActivity() {
 
-    private val viewModel : ConversationViewModel by viewModels()
+    private lateinit var viewModel: ConversationViewModel
     private lateinit var adapter: ConversationsAdapter
+    private lateinit var conversationService: ConversationDataService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_conversations)
 
-        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
+        // Initialiser ConversationDataService depuis Retrofit
+        conversationService = RetrofitClient.conversationDataService
+
+        // Initialiser Repository et ViewModel
+        val repository = ConversationRepository(conversationService)
+        val factory = ConversationViewModelFactory(repository)
+        viewModel = ViewModelProvider(this, factory).get(ConversationViewModel::class.java)
+
+        // Configurer Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
+        // Configurer RecyclerView
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewConversations)
         recyclerView.layoutManager = LinearLayoutManager(this)
-
-        val adapter = ConversationsAdapter(this, listOf())
-
+        adapter = ConversationsAdapter(this, listOf())
         recyclerView.adapter = adapter
 
+        // Observer les données du ViewModel
         observeViewModel()
-        val userId = 1
+
+        // Charger les conversations de l'utilisateur
+        val userId = 1 // Vous pouvez récupérer cet ID depuis SessionManager ou autre.
         viewModel.fetchUserConversations(userId)
     }
 
-    private fun observeViewModel(){
-        viewModel.userConversations.observe(this){ conversations ->
+    private fun observeViewModel() {
+        viewModel.userConversations.observe(this) { conversations ->
             adapter.updateData(conversations)
         }
 
-        viewModel.error.observe(this){errorMessage ->
+        viewModel.error.observe(this) { errorMessage ->
             Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
         }
     }
