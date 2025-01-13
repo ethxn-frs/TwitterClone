@@ -1,4 +1,9 @@
 package com.etang.twitterclone.data.model
 
-class Conversation {
-}
+data class Conversation(
+    val id: Int,
+    val name: String,
+    val createdAt: String,
+    val users: List<User>,
+    val messages: List<Message>,
+)
