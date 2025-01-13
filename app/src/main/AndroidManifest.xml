@@ -56,6 +56,7 @@
         <activity android:name=".pages.HomeActivity"/>
         <activity android:name=".pages.post.TimelineActivity"/>
         <activity android:name=".pages.ProfileActivity"/>
+        <activity android:name=".pages.post.PostDetailsActivity" />
 
         <activity
             android:name=".pages.post.CreatePostActivity"

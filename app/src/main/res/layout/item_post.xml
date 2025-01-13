@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="12dp">
+    android:padding="7dp">
 
     <!-- Détails du tweet -->
     <LinearLayout
@@ -12,10 +12,11 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <!-- Ligne avec l'auteur, le nom d'utilisateur et le temps -->
+        <!-- Ligne avec l'auteur, le nom d'utilisateur, le temps et plus d'actions-->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <!-- Nom de l'auteur -->
@@ -23,20 +24,20 @@
                 android:id="@+id/tvAuthor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
                 android:text="@string/post_author_name"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginEnd="4dp" />
+                android:textStyle="bold" />
 
             <!-- Nom d'utilisateur -->
             <TextView
                 android:id="@+id/tvAuthorUsername"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
                 android:text="@string/post_author_username"
-                android:textSize="14sp"
                 android:textColor="@android:color/darker_gray"
-                android:layout_marginEnd="4dp" />
+                android:textSize="14sp" />
 
             <!-- Temps écoulé -->
             <TextView
@@ -44,8 +45,23 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/post_time_ago"
-                android:textSize="14sp"
-                android:textColor="@android:color/darker_gray" />
+                android:textColor="@android:color/darker_gray"
+                android:textSize="14sp" />
+
+            <!-- Espace flexible pour pousser le bouton à la fin -->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <!-- Bouton pour plus d'actions -->
+            <ImageButton
+                android:id="@+id/btnMoreActions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/more_actions_button"
+                android:src="@drawable/ic_more_horizontal" />
         </LinearLayout>
 
         <!-- Contenu du post -->
@@ -62,17 +78,17 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <!-- Bouton pour liker -->
             <ImageButton
                 android:id="@+id/btnLike"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_favorite_outlined24px"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/like_button" />
+                android:contentDescription="@string/like_button"
+                android:src="@drawable/ic_favorite_outlined24px" />
 
             <!-- Nombre de likes -->
             <TextView
@@ -90,9 +106,9 @@
                 android:id="@+id/btnComment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_comment24px"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/comment_button" />
+                android:contentDescription="@string/comment_button"
+                android:src="@drawable/ic_comment24px" />
 
             <!-- Nombre de commentaire -->
             <TextView
@@ -105,16 +121,30 @@
                 android:textColor="@android:color/darker_gray"
                 android:textSize="14sp" />
 
+            <!-- Espace flexible pour pousser le bouton à la fin -->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
             <!-- Bouton pour partager -->
             <ImageButton
                 android:id="@+id/btnShare"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:paddingBottom="3dp"
-                android:src="@drawable/ic_share_24px"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/share_button" />
+                android:contentDescription="@string/share_button"
+                android:paddingBottom="3dp"
+                android:src="@drawable/ic_share_24px" />
         </LinearLayout>
+
+        <!-- Ligne de séparation -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/black" />
+
     </LinearLayout>
 </LinearLayout>

@@ -1,12 +1,14 @@
 package com.etang.twitterclone.data.model
 
+import com.google.gson.annotations.SerializedName
+
 data class Post(
     val id: Int,
-    val author: User,
-    val content: String,
-    val createdAt: String,
-    val deleted: Boolean = false,
-    val parentPost: Post? = null,
-    val comments: List<Post> = emptyList(),
-    val userHaveLiked: List<User> = emptyList()
+    @SerializedName("author") val author: User,
+    @SerializedName("content") val content: String,
+    @SerializedName("createdAt") val createdAt: String,
+    @SerializedName("deleted") val deleted: Boolean = false,
+    @SerializedName("parentPost") val parentPost: Post? = null,
+    @SerializedName("comments") val comments: List<Post> = emptyList(),
+    @SerializedName("userHaveLiked") val userHaveLiked: List<User> = emptyList()
 )
