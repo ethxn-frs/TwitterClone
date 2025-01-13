@@ -8,8 +8,9 @@ import com.etang.twitterclone.data.model.Conversation
 import com.etang.twitterclone.repositories.ConversationRepository
 import kotlinx.coroutines.launch
 
-class ConversationViewModel(private val repository: ConversationRepository) : ViewModel() {
+class ConversationViewModel() : ViewModel() {
 
+    private val repository = ConversationRepository()
     private val _userConversations = MutableLiveData<List<Conversation>>()
     val userConversations: LiveData<List<Conversation>> get() = _userConversations
 
@@ -19,7 +20,7 @@ class ConversationViewModel(private val repository: ConversationRepository) : Vi
     fun fetchUserConversations(userId: Int) {
         viewModelScope.launch {
             try {
-                val conversations = repository.getUserConversations(userId)
+                 val conversations = repository.getUserConversations(userId)
                 _userConversations.value = conversations
             } catch (e: Exception) {
                 _error.value = "Failed to load conversations: ${e.message}"
