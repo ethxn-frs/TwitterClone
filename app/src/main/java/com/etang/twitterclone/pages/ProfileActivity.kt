@@ -2,100 +2,124 @@ package com.etang.twitterclone.pages
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageView
 import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import com.etang.twitterclone.R
+import com.etang.twitterclone.data.model.User
 import com.etang.twitterclone.pages.post.TimelineActivity
 import com.etang.twitterclone.session.SessionManager
 
 class ProfileActivity:AppCompatActivity() {
 
     private lateinit var sessionManager: SessionManager
+    private  var tvProfileName: TextView? = null
+    private  var tvProfileUsername: TextView? = null
+    private  var ivProfileImage: ImageView? = null
+    private  var personnalInfo: CardView? = null
+    private  var parameter: CardView? = null
+    //private lateinit var backToHomePage: ImageView
+    private  var switchNotifications: Switch? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_profile)
-
         sessionManager = SessionManager(this)
+        val user = sessionManager.getUser()
 
-        val tvProfileName = findViewById<TextView>(R.id.tvProfileName)
-        val tvProfileUsername = findViewById<TextView>(R.id.tvProfileUsername)
-        val ivProfileImage = findViewById<ImageView>(R.id.ivProfileImage)
-        val tvChangeProfile = findViewById<TextView>(R.id.tvChangeProfile)
-
-        val headerlayout = findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.headerProfile)
-        val personnalInfo = findViewById<androidx.cardview.widget.CardView>(R.id.cardPersonalInfo)
-        val parameter = findViewById<androidx.cardview.widget.CardView>(R.id.cardViewSettings)
-
-        val backToHomePage = headerlayout.findViewById<ImageView>(R.id.ivBack)
-
-        // variable pour la gestion des paramètres
-        val switchNotifications = parameter.findViewById<Switch>(R.id.switchNotifications)
-        //val deleteAccount = parameter.findViewById<TextView>(R.id.deleteCompte)
-        //val logout = parameter.findViewById<TextView>(R.id.logout)
-
-
-        ivProfileImage.setImageResource(R.drawable.ic_profile)
-
-        var user = sessionManager.getUser()
-
-        /*------------------------------------ Informations personnelles ---------------------------------------------*/
-
-        if (user != null){
-            tvProfileName.text ="${user.firstName}  ${user.lastName}"
-            tvProfileUsername.text = "@${user.username}"
-
-            personnalInfo.findViewById<TextView>(R.id.name).text =user.firstName
-            personnalInfo.findViewById<TextView>(R.id.lastname).text =user.lastName
-            personnalInfo.findViewById<TextView>(R.id.phone_number).text = user.phoneNumber
-            personnalInfo.findViewById<TextView>(R.id.email).text =user.email
+        try {
+            initializeViews()
+            initialyseUserData(user)
+            //setupClickListeners()
+        } catch (e: Exception) {
+            Log.e("ProfileActivity", "Erreur d'initialisation des vues : ${e.message}")
+            Toast.makeText(this, "Une erreur s'est produite", Toast.LENGTH_SHORT).show()
         }
+    }
 
-        findViewById<ImageView>(R.id.editeProfil).setOnClickListener {
-            Toast.makeText(this, "implémanter page de modification", Toast.LENGTH_SHORT).show()
+    private fun initializeViews() {
+        try {
+            tvProfileName = findViewById(R.id.tvProfileName)
+            tvProfileUsername = findViewById(R.id.tvProfileUsername)
+            ivProfileImage = findViewById(R.id.ivProfileImage)
+            personnalInfo = findViewById(R.id.cardPersonalInfo)
+            parameter = findViewById(R.id.cardViewSettings)
+            switchNotifications = parameter?.findViewById(R.id.switchNotifications)
+
+            ivProfileImage?.setImageResource(R.drawable.ic_profile) // Chargement d'une image par défaut
+        } catch (e: Exception) {
+            Log.e("ProfileActivity", "Erreur d'initialisation des vues : ${e.message}")
+            throw e
         }
+    }
 
-        tvChangeProfile.setOnClickListener {
+    private fun setupClickListeners() {
+        // Modifier la photo de profil
+        findViewById<TextView>(R.id.tvChangeProfile).setOnClickListener {
             Toast.makeText(this, "Modifier la photo de profil", Toast.LENGTH_SHORT).show()
-            // Implémentez ici l'ouverture de l'écran ou le dialogue pour changer la photo
-        }
-        /*-----------------------------------------------------------------------------------------------------------------*/
-
-        /*----------------------------------- Paramètres ------------------------------------------------------------------*/
-
-        switchNotifications.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                Toast.makeText(this, "Notifications activées", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Notifications désactivées", Toast.LENGTH_SHORT).show()
-            }
+            // Implémentez l'ouverture d'une page pour modifier la photo
         }
 
-        //delete account
-        parameter.findViewById<TextView>(R.id.deleteCompte).setOnClickListener {
-            // logique pour supprimer le compte
-            Toast.makeText(this, "implémenter cet partie", Toast.LENGTH_SHORT).show()
+        // Modifier les informations personnelles
+        findViewById<ImageView>(R.id.editeProfil).setOnClickListener {
+            navigateToEditProfile()
         }
 
-        // logout
-        parameter.findViewById<TextView>(R.id.logout).setOnClickListener {
+        // Notifications
+        switchNotifications?.setOnCheckedChangeListener { _, isChecked ->
+            val message = if (isChecked) "Notifications activées" else "Notifications désactivées"
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        }
+
+        // Supprimer le compte
+        parameter?.findViewById<TextView>(R.id.deleteCompte)?.setOnClickListener {
+            Toast.makeText(this, "Implémentez la suppression du compte", Toast.LENGTH_SHORT).show()
+        }
+
+        // Déconnexion
+        parameter?.findViewById<TextView>(R.id.logout)?.setOnClickListener {
             sessionManager.clearSession()
             val intent = Intent(this, WelcomeActivity::class.java)
             startActivity(intent)
         }
 
-        /*-----------------------------------------------------------------------------------------------------*/
+        // Retour à la page d'accueil
+        /*backToHomePage.setOnClickListener {
+            navigateToHomePage()
+        }*/
+    }
 
+    private fun navigateToEditProfile() {
+        val intent = Intent(this, EditProfileActivity::class.java)
+        startActivity(intent)
+    }
 
-        /* Header de la page profile*/
-        // Retour à la page home
-        backToHomePage.setOnClickListener {
-            val intent = Intent(this, TimelineActivity::class.java)
-            startActivity(intent)
+    private fun navigateToHomePage() {
+        val intent = Intent(this, TimelineActivity::class.java)
+        startActivity(intent)
+    }
+
+    fun initialyseUserData(user: User?){
+        //val tvProfileName = findViewById<TextView>(R.id.tvProfileName)
+        //val tvProfileUsername = findViewById<TextView>(R.id.tvProfileUsername)
+        if (user != null){
+            tvProfileName?.text ="${user.firstName}  ${user.lastName}"
+            tvProfileUsername?.text = "@${user.username}"
+
+            personnalInfo?.findViewById<TextView>(R.id.name)?.text =user.firstName
+            personnalInfo?.findViewById<TextView>(R.id.lastname)?.text =user.lastName
+            personnalInfo?.findViewById<TextView>(R.id.phone_number)?.text = user.phoneNumber
+            personnalInfo?.findViewById<TextView>(R.id.email)?.text =user.email
+        }
+    }
+
+    fun editePersonalData(){
+        findViewById<ImageView>(R.id.editeProfil).setOnClickListener {
+            Toast.makeText(this, "implémanter page de modification", Toast.LENGTH_SHORT).show()
         }
     }
 }

@@ -61,6 +61,7 @@
 
         <activity android:name=".pages.settings.SettingsActivity"/>
         <activity android:name=".pages.menu.SideMenuActivity"/>
+        <activity android:name=".pages.EditProfileActivity" />
 
     </application>
 

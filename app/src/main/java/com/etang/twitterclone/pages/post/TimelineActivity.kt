@@ -151,6 +151,7 @@ class TimelineActivity : AppCompatActivity() {
         }
 
         ivSettings?.setOnClickListener {
+            Log.e("TimelineActivity", "le bouton paramètre est clicker ")
             startActivity(Intent(this, ProfileActivity::class.java))
         }?: run {
             Log.e("TimelineActivity", "ivSettings is null")

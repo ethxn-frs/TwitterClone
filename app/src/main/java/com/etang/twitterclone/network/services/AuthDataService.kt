@@ -1,6 +1,7 @@
 package com.etang.twitterclone.network.services
 
 import com.etang.twitterclone.data.model.auth.LoginResponse
+import com.etang.twitterclone.network.dto.UpdateUserDto
 import com.etang.twitterclone.network.dto.auth_dto.LoginDto
 import com.etang.twitterclone.network.dto.auth_dto.LoginResponseDto
 import com.etang.twitterclone.network.dto.auth_dto.RegisterDto
@@ -9,6 +10,7 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.PUT
 
 interface AuthDataService {
     @Headers("Content-Type: application/json")
@@ -24,4 +26,8 @@ interface AuthDataService {
     @Headers("Content-Type: application/json")
     @POST("signup")
     fun signup(@Body request: RegisterDto):Call<RegisterResponseDto>
+
+    @Headers("Content-Type: application/json")
+    @PUT("updateuser")
+    fun updateUserData(@Body request: UpdateUserDto):Call<UpdateUserDto>
 }

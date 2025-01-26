@@ -8,6 +8,7 @@ import com.etang.twitterclone.data.model.auth.LoginResponse
 import com.etang.twitterclone.data.model.auth.Register
 import com.etang.twitterclone.data.model.auth.RegisterResponse
 import com.etang.twitterclone.network.RetrofitClient
+import com.etang.twitterclone.network.dto.UpdateUserDto
 import com.etang.twitterclone.network.dto.auth_dto.LoginDto
 import com.etang.twitterclone.network.dto.auth_dto.LoginResponseDto
 import com.etang.twitterclone.network.dto.auth_dto.RegisterDto
@@ -88,6 +89,31 @@ class AuthDataRepository {
             }
         })
 
+    }
+
+    fun updateUserData(updateUserData: UpdateUserDto, callback: (UpdateUserDto?, String?) -> Unit){
+
+        val call = authDataService.updateUserData(updateUserData)
+        call.enqueue(object : Callback<UpdateUserDto>{
+            override fun onResponse(call: Call<UpdateUserDto>, response: Response<UpdateUserDto>) {
+                if (response.isSuccessful){
+                    val responseBody = response.body()
+                    if (responseBody != null ){
+                        callback(responseBody, null)
+                        Log.d("AuthDataRepository", "Update réussie")
+                    }else{
+                        callback(null, "Réponse vide du serveur")
+                    }
+
+                }else{
+                    Log.d("AuthDataRepository","Erreur : ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<UpdateUserDto>, t: Throwable) {
+                Log.d("AuthDataRepository","Erreur : ${t.message}")
+            }
+        })
     }
 
 }
