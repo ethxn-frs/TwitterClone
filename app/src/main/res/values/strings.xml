@@ -3,8 +3,6 @@
     <string name="post_content">Post content here...</string>
     <string name="post_author_username">\@UserName</string>
     <string name="post_author_name">Author Name</string>
-    <string name="post_likes_count">Likes: 0</string>
-    <string name="post_comments_count">Comments: 0</string>
     <string name="param_tres">Paramètres</string>
     <string name="notifications">Notifications</string>
     <string name="compte">Compte</string>
@@ -19,12 +17,16 @@
     <string name="nom_pr_noms">Nom Prénoms :</string>
     <string name="t_l_phone">Téléphone :</string>
     <string name="email">Email :</string>
-    <string name="user_name_format">%1$s %2$s</string>
-    <string name="user_handle_format">@%1$s</string>
-    <string name="icon_description">Icône pour le paramètre</string>
-    <string name="arrow_description">description pour le paramètre</string>
     <string name="retour" />
     <string name="parametres" />
-    <string name="drawer_open">Ouvrir le menu</string>
-    <string name="drawer_close">Fermer le menu</string>
+    <string name="post_likes_count">0</string>
+    <string name="post_comments_count">0</string>
+    <string name="like_button">Bouton permettant de liker un post</string>
+    <string name="post_time_ago">·  18h</string>
+    <string name="share_button">Boutton permettant de partager un post</string>
+    <string name="comment_button">Bouton permettant de commenter un post</string>
+    <string name="more_actions_button">Boutton permettant d\'ouvrir un dialogue avec toute les actions</string>
+    <string name="post_created_hour">18:55</string>
+    <string name="post_created_date">17/12/2024</string>
+    <string name="centerd_dott">·</string>
 </resources>
