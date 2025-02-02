@@ -17,109 +17,112 @@ import com.etang.twitterclone.session.SessionManager
 class ProfileActivity:AppCompatActivity() {
 
     private lateinit var sessionManager: SessionManager
-    private  var tvProfileName: TextView? = null
-    private  var tvProfileUsername: TextView? = null
-    private  var ivProfileImage: ImageView? = null
-    private  var personnalInfo: CardView? = null
-    private  var parameter: CardView? = null
-    //private lateinit var backToHomePage: ImageView
-    private  var switchNotifications: Switch? = null
+    private lateinit var headerlayout : androidx.constraintlayout.widget.ConstraintLayout
+    private lateinit var tvProfileName: TextView
+    private lateinit var tvProfileUsername: TextView
+    private lateinit var ivProfileImage: ImageView
+    private lateinit var tvChangeProfile: TextView
+    private lateinit var personnalInfo: CardView
+    private lateinit var parameter: CardView
+    private lateinit var backToHomePage: ImageView
+    private lateinit var switchNotifications: Switch
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        setContentView(R.layout.activity_profile)
+
         sessionManager = SessionManager(this)
+        initializeViews()
+
         val user = sessionManager.getUser()
-
-        try {
-            initializeViews()
-            initialyseUserData(user)
-            //setupClickListeners()
-        } catch (e: Exception) {
-            Log.e("ProfileActivity", "Erreur d'initialisation des vues : ${e.message}")
-            Toast.makeText(this, "Une erreur s'est produite", Toast.LENGTH_SHORT).show()
+        if (user != null) {
+            populateUserData(user)
+        } else {
+            Log.e("ProfileActivity", "User data is null")
+            Toast.makeText(this, "Erreur : utilisateur introuvable", Toast.LENGTH_SHORT).show()
         }
+
+        setupClickListeners()
     }
 
+
+    /** Initialise toutes les vues de l'activité */
     private fun initializeViews() {
-        try {
-            tvProfileName = findViewById(R.id.tvProfileName)
-            tvProfileUsername = findViewById(R.id.tvProfileUsername)
-            ivProfileImage = findViewById(R.id.ivProfileImage)
-            personnalInfo = findViewById(R.id.cardPersonalInfo)
-            parameter = findViewById(R.id.cardViewSettings)
-            switchNotifications = parameter?.findViewById(R.id.switchNotifications)
+        tvProfileName = findViewById(R.id.tvProfileName)
+        headerlayout = findViewById(R.id.headerProfile)
+        tvProfileUsername = findViewById(R.id.tvProfileUsername)
+        ivProfileImage = findViewById(R.id.ivProfileImage)
+        tvChangeProfile = findViewById(R.id.tvChangeProfile)
+        personnalInfo = findViewById(R.id.cardPersonalInfo)
+        parameter = findViewById(R.id.cardViewSettings)
+        backToHomePage = headerlayout.findViewById(R.id.ivBack)
+        switchNotifications = parameter.findViewById(R.id.switchNotifications)
 
-            ivProfileImage?.setImageResource(R.drawable.ic_profile) // Chargement d'une image par défaut
-        } catch (e: Exception) {
-            Log.e("ProfileActivity", "Erreur d'initialisation des vues : ${e.message}")
-            throw e
-        }
+        ivProfileImage.setImageResource(R.drawable.ic_profile)
     }
 
+    /** Remplit les informations de l'utilisateur dans les vues */
+    private fun populateUserData(user: User) {
+        tvProfileName.text = "${user.firstName} ${user.lastName}"
+        tvProfileUsername.text = "@${user.username}"
+
+        personnalInfo.findViewById<TextView>(R.id.name).text = user.firstName
+        personnalInfo.findViewById<TextView>(R.id.lastname).text = user.lastName
+        personnalInfo.findViewById<TextView>(R.id.phone_number).text = user.phoneNumber
+        personnalInfo.findViewById<TextView>(R.id.email).text = user.email
+    }
+
+    /** Définit les actions des différents boutons */
     private fun setupClickListeners() {
         // Modifier la photo de profil
-        findViewById<TextView>(R.id.tvChangeProfile).setOnClickListener {
+        tvChangeProfile.setOnClickListener {
             Toast.makeText(this, "Modifier la photo de profil", Toast.LENGTH_SHORT).show()
-            // Implémentez l'ouverture d'une page pour modifier la photo
+            // Ajouter la logique pour modifier la photo
         }
 
         // Modifier les informations personnelles
         findViewById<ImageView>(R.id.editeProfil).setOnClickListener {
-            navigateToEditProfile()
+            Toast.makeText(this, "Implémentez la page de modification", Toast.LENGTH_SHORT).show()
+            // Navigation vers la page de modification (à implémenter)
         }
 
-        // Notifications
-        switchNotifications?.setOnCheckedChangeListener { _, isChecked ->
+        // Gestion des notifications
+        switchNotifications.setOnCheckedChangeListener { _, isChecked ->
             val message = if (isChecked) "Notifications activées" else "Notifications désactivées"
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         }
 
-        // Supprimer le compte
-        parameter?.findViewById<TextView>(R.id.deleteCompte)?.setOnClickListener {
+        // Suppression du compte
+        parameter.findViewById<TextView>(R.id.deleteCompte).setOnClickListener {
             Toast.makeText(this, "Implémentez la suppression du compte", Toast.LENGTH_SHORT).show()
         }
 
         // Déconnexion
-        parameter?.findViewById<TextView>(R.id.logout)?.setOnClickListener {
+        parameter.findViewById<TextView>(R.id.logout).setOnClickListener {
             sessionManager.clearSession()
-            val intent = Intent(this, WelcomeActivity::class.java)
-            startActivity(intent)
+            navigateToWelcomeScreen()
         }
 
         // Retour à la page d'accueil
-        /*backToHomePage.setOnClickListener {
+        backToHomePage.setOnClickListener {
             navigateToHomePage()
-        }*/
+        }
     }
 
-    private fun navigateToEditProfile() {
-        val intent = Intent(this, EditProfileActivity::class.java)
-        startActivity(intent)
-    }
-
+    /** Navigation vers l'écran d'accueil */
     private fun navigateToHomePage() {
         val intent = Intent(this, TimelineActivity::class.java)
         startActivity(intent)
     }
 
-    fun initialyseUserData(user: User?){
-        //val tvProfileName = findViewById<TextView>(R.id.tvProfileName)
-        //val tvProfileUsername = findViewById<TextView>(R.id.tvProfileUsername)
-        if (user != null){
-            tvProfileName?.text ="${user.firstName}  ${user.lastName}"
-            tvProfileUsername?.text = "@${user.username}"
-
-            personnalInfo?.findViewById<TextView>(R.id.name)?.text =user.firstName
-            personnalInfo?.findViewById<TextView>(R.id.lastname)?.text =user.lastName
-            personnalInfo?.findViewById<TextView>(R.id.phone_number)?.text = user.phoneNumber
-            personnalInfo?.findViewById<TextView>(R.id.email)?.text =user.email
-        }
+    /** Navigation vers l'écran de bienvenue */
+    private fun navigateToWelcomeScreen() {
+        val intent = Intent(this, WelcomeActivity::class.java)
+        startActivity(intent)
     }
 
-    fun editePersonalData(){
-        findViewById<ImageView>(R.id.editeProfil).setOnClickListener {
-            Toast.makeText(this, "implémanter page de modification", Toast.LENGTH_SHORT).show()
-        }
+    private fun navigateToEditeUserInformations(){
+
     }
 }

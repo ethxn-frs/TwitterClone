@@ -3,24 +3,32 @@ package com.etang.twitterclone.pages.post
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityOptionsCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.etang.twitterclone.R
 import com.etang.twitterclone.adapter.PostsAdapter
+import com.etang.twitterclone.adapter.SideMenuAdapter
 import com.etang.twitterclone.data.model.Post
+import com.etang.twitterclone.data.model.SideMenuItem
 import com.etang.twitterclone.network.dto.auth_dto.LoginResponseDto
 import com.etang.twitterclone.pages.ConversationsActivity
 import com.etang.twitterclone.pages.ProfileActivity
+import com.etang.twitterclone.pages.settings.SettingsActivity
 import com.etang.twitterclone.session.SessionManager
 import com.etang.twitterclone.viewmodel.PostViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.io.Console
 
 class TimelineActivity : AppCompatActivity() {
 
@@ -28,7 +36,14 @@ class TimelineActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: PostsAdapter
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var drawerLayout: DrawerLayout
     private lateinit var sessionManager: SessionManager
+    private lateinit var sideMenu: View
+    private lateinit var headerLayout : androidx.constraintlayout.widget.ConstraintLayout
+    private lateinit var tvTitle : TextView
+    private lateinit var ivSettings :ImageView
+    private lateinit var ivProfile : ImageView
+    private lateinit var recyclerViewMenu: RecyclerView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,30 +52,66 @@ class TimelineActivity : AppCompatActivity() {
 
         sessionManager = SessionManager(this)
 
-        // Accéder à l'inclusion du header
-        val headerLayout =
-            findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.headerLayout)
+        initializeViews()
+        setupHeader()
+        setupRecyclerView()
+        setupFab()
+        setupBottomNavigation()
+        setupSwipeRefresh()
+        observeViewModel()
+        viewModel.fetchPosts()
+        handleUserWelcome()
+        setupRecyclerViewMenu()
+        // Clics sur les options du menu
+        setupMenuActions(sideMenu)
+    }
 
-        // Récupérer le TextView du Header
-        val tvTitle = headerLayout.findViewById<TextView>(R.id.tvHeaderTitle)
-        tvTitle.text = "Post"
+    private fun initializeViews(){
+        sideMenu = findViewById(R.id.side_menu)
+        drawerLayout = findViewById(R.id.drawerLayout)
+        headerLayout = findViewById(R.id.headerLayout)
+        tvTitle = headerLayout.findViewById(R.id.tvHeaderTitle)
+        ivSettings = headerLayout.findViewById(R.id.ivSettings)
+        ivProfile = headerLayout.findViewById(R.id.ivProfile)
+        recyclerViewMenu = findViewById(R.id.recyclerViewMenu)
+    }
 
-        val ivSettings = headerLayout.findViewById<ImageView>(R.id.ivSettings)
 
 
-        val userResponse: LoginResponseDto? =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                intent.getSerializableExtra("USER_DATA", LoginResponseDto::class.java)
+    private fun setupHeader() {
+        tvTitle.text = getString(R.string.header_title_posts)
+        ivSettings.setOnClickListener {
+            val intent = Intent(this, ProfileActivity::class.java)
+            startActivity(intent)
+        }
+        ivProfile.setOnClickListener {
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    private fun setupMenuActions(sideMenu: View) {
+        //val ivProfile = headerLayout.findViewById<ImageView>(R.id.ivProfile)
+        //val ivSettings = headerLayout.findViewById<ImageView>(R.id.ivSettings)
+
+        ivProfile.setOnClickListener {
+            if (drawerLayout.isDrawerOpen(androidx.core.view.GravityCompat.START)) {
+                drawerLayout.closeDrawer(androidx.core.view.GravityCompat.START)
             } else {
-                @Suppress("DEPRECATION")
-                intent.getSerializableExtra("USER_DATA") as? LoginResponseDto
+                drawerLayout.openDrawer(androidx.core.view.GravityCompat.START)
             }
-
-        userResponse?.let {
-            Toast.makeText(this, "Bienvenue ${it.user.username} !", Toast.LENGTH_SHORT).show()
         }
 
-        // Configurer RecyclerView
+        ivSettings.setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+        }
+
+        sideMenu.findViewById<TextView>(R.id.parameter_and_confidentiality).setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java))
+        }
+    }
+
+    private fun setupRecyclerView() {
         recyclerView = findViewById(R.id.recyclerViewPosts)
         adapter = PostsAdapter(
             sessionManager = sessionManager,
@@ -75,54 +126,58 @@ class TimelineActivity : AppCompatActivity() {
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
+    }
 
-        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
+    private fun setupRecyclerViewMenu(){
+        val menuItems = getMenuItems()
+        recyclerViewMenu.layoutManager = LinearLayoutManager(this)
+        recyclerViewMenu.adapter = SideMenuAdapter(menuItems)
 
+    }
+
+    private fun setupFab() {
         val fabCreatePost = findViewById<FloatingActionButton>(R.id.fabCreatePost)
         fabCreatePost.setOnClickListener {
-
             val intent = Intent(this, CreatePostActivity::class.java)
             startActivity(intent)
         }
+    }
 
+    private fun setupBottomNavigation() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.navigation_home -> {
-                    true
-                }
-
+                R.id.navigation_home -> true
                 R.id.navigation_messages -> {
                     val intent = Intent(this, ConversationsActivity::class.java)
                     startActivity(intent)
                     true
                 }
-
                 else -> false
             }
         }
+    }
 
+    private fun setupSwipeRefresh() {
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout)
         swipeRefreshLayout.setOnRefreshListener {
             viewModel.fetchPosts()
         }
+    }
 
-        observeViewModel()
-        viewModel.fetchPosts()
+    private fun handleUserWelcome() {
+        val userResponse: LoginResponseDto? =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getSerializableExtra("USER_DATA", LoginResponseDto::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                intent.getSerializableExtra("USER_DATA") as? LoginResponseDto
+            }
 
-
-        ivSettings.setOnClickListener {
-            val intent = Intent(this, ProfileActivity::class.java)
-            startActivity(intent)
+        userResponse?.let {
+            Toast.makeText(this, getString(R.string.welcome_message, it.user.username), Toast.LENGTH_SHORT).show()
         }
     }
-
-    override fun startActivity(intent: Intent?) {
-        super.startActivity(intent)
-        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
-    }
-
 
     private fun observeViewModel() {
         viewModel.posts.observe(this) { posts ->
@@ -152,4 +207,47 @@ class TimelineActivity : AppCompatActivity() {
         }
         startActivity(Intent.createChooser(shareIntent, "Share post via"))
     }
+
+    private fun getMenuItems(): List<SideMenuItem> {
+        return listOf(
+            SideMenuItem(R.drawable.ic_profile, "Profil") {
+                val intent = Intent(this, ProfileActivity::class.java)
+                startActivity(intent)
+            },
+            SideMenuItem(R.drawable.ic_star, "Premium") {
+                Toast.makeText(this, "Premium sélectionné", Toast.LENGTH_SHORT).show()
+            },
+            SideMenuItem(R.drawable.ic_save, "Signets") {
+                Toast.makeText(this, "Signets sélectionné", Toast.LENGTH_SHORT).show()
+            },
+            SideMenuItem(R.drawable.ic_job, "Offres d'emploi") {
+                Toast.makeText(this, "Offres d'emploi sélectionné", Toast.LENGTH_SHORT).show()
+            },
+            SideMenuItem(R.drawable.ic_money, "Monétisation") {
+                Toast.makeText(this, "Monétisation sélectionnée", Toast.LENGTH_SHORT).show()
+            },
+            SideMenuItem(R.drawable.ic_list, "Liste"){
+                Toast.makeText(this, "List sélectionnée", Toast.LENGTH_SHORT).show()
+            },
+            SideMenuItem(R.drawable.ic_space, "Spaces"){
+                Toast.makeText(this, "space sélectionnée", Toast.LENGTH_SHORT).show()
+            },
+            SideMenuItem(R.drawable.ic_money, "Monétisation"){
+                Toast.makeText(this, "Monétisation sélectionnée", Toast.LENGTH_SHORT).show()
+            }
+        )
+    }
+
+
+    override fun startActivity(intent: Intent?) {
+        super.startActivity(intent)
+        // Appliquer les options d'animation pour la transition
+        val options = ActivityOptionsCompat.makeCustomAnimation(
+            this,
+            android.R.anim.slide_in_left,
+            android.R.anim.slide_out_right
+        )
+        startActivity(intent, options.toBundle())
+    }
+
 }

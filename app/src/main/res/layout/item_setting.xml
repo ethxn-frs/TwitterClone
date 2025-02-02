@@ -10,7 +10,7 @@
         android:id="@+id/ivIcon"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:contentDescription="@string/icon_description"
+        android:contentDescription="image de l'icone"
         app:tint="@color/black" />
 
     <LinearLayout
@@ -42,6 +42,6 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:src="@drawable/ic_arrow"
-        android:contentDescription="@string/arrow_description"
+        android:contentDescription=""
         app:tint="@color/black" />
 </LinearLayout>
