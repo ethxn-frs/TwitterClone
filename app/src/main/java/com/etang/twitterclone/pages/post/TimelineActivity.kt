@@ -15,7 +15,7 @@ import com.etang.twitterclone.R
 import com.etang.twitterclone.adapter.PostsAdapter
 import com.etang.twitterclone.data.model.Post
 import com.etang.twitterclone.network.dto.auth_dto.LoginResponseDto
-import com.etang.twitterclone.pages.ConversationsActivity
+import com.etang.twitterclone.pages.conversations.ConversationsActivity
 import com.etang.twitterclone.pages.ProfileActivity
 import com.etang.twitterclone.session.SessionManager
 import com.etang.twitterclone.viewmodel.PostViewModel

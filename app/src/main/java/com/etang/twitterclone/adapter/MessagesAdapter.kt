@@ -3,29 +3,22 @@ package com.etang.twitterclone.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.etang.twitterclone.R
 import com.etang.twitterclone.data.model.Message
-import com.bumptech.glide.Glide
-import com.google.gson.internal.bind.ReflectiveTypeAdapterFactory.Adapter
 
-class MessagesAdapter : ListAdapter<Message, MessagesAdapter.MessageViewHolder>(
-    object : DiffUtil.ItemCallback<Message>(){
-        override fun areItemsTheSame(oldItem: Message, newItem: Message) = oldItem.id == newItem.id
-        override fun areContentsTheSame(oldItem: Message, newItem: Message) = oldItem == newItem
+class MessagesAdapter(
+    private val currentUserId: Int,
+    private val otherParticipantName: String
+) : RecyclerView.Adapter<MessagesAdapter.MessageViewHolder>(){
 
-    }
-) {
-    class MessageViewHolder(view: View) : RecyclerView.ViewHolder(view){
-        val profileImage: ImageView = view.findViewById(R.id.ivProfileImage)
-        val senderName: TextView = view.findViewById(R.id.tvProfileName)
-        val lastMessage: TextView = view.findViewById(R.id.lastname)
-        val messageDate: TextView = view.findViewById(R.id.welcomeMessage)
+    private var messages: List<Message> = listOf()
 
+    inner class MessageViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView){
+        val authorNameTextView : TextView = itemView.findViewById(R.id.tvAuthorName)
+        val messageContentTextView: TextView = itemView.findViewById(R.id.tvMessageContent)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
@@ -34,14 +27,37 @@ class MessagesAdapter : ListAdapter<Message, MessagesAdapter.MessageViewHolder>(
     }
 
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
-        val message = getItem(position)
-        holder.senderName.text = message.author.firstName
-        holder.lastMessage.text = message.content
-        holder.messageDate.text = message.sentAt.toString()
+        val message = messages[position]
 
-        Glide.with(holder.profileImage.context)
-            .load(message.author) // ajoutez l'image de l'author
-            .placeholder(R.drawable.ic_profile)
-            .into(holder.profileImage)
+        val author = message.author
+        holder.authorNameTextView.text = if (author != null){
+            "${author.firstName} ${author.lastName}"
+        }else{
+            "Inconnu"
+        }
+        holder.messageContentTextView.text = message.content
+
+        holder.itemView.setOnClickListener {
+            if (author?.id == currentUserId){
+                Toast.makeText(
+                    holder.itemView.context,
+                    "Envoyé à : $otherParticipantName",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }else{
+                Toast.makeText(
+                    holder.itemView.context,
+                    "Reçu de : ${author?.firstName ?: "Inconnu"}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    override fun getItemCount(): Int = messages.size
+
+    fun submitList(newList: List<Message>){
+        messages = newList
+        notifyDataSetChanged()
     }
 }

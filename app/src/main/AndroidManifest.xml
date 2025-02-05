@@ -50,7 +50,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".pages.MessagesActivity"/>
-        <activity android:name=".pages.ConversationsActivity"/>
+        <activity android:name=".pages.conversations.ConversationsActivity"/>
 
         <activity android:name=".pages.LoginActivity" />
         <activity android:name=".pages.HomeActivity"/>
@@ -61,6 +61,12 @@
         <activity
             android:name=".pages.post.CreatePostActivity"
             android:exported="true" />
+        <activity
+            android:name=".pages.conversations.ConversationsDetailsActivity"
+            android:label="Conversation Details"/>
+        <activity
+            android:name=".pages.conversations.CreateConversationActivity"/>
+
 
     </application>
 

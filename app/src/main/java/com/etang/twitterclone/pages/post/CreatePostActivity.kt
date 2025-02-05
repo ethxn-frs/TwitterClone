@@ -20,7 +20,7 @@ class CreatePostActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_post)
 
-            sessionManager = SessionManager(this)
+        sessionManager = SessionManager(this)
 
         val etPostContent = findViewById<EditText>(R.id.etPostContent)
         val btnPublishPost = findViewById<Button>(R.id.btnPublishPost)
