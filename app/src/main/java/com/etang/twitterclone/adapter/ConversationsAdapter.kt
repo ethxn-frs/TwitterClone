@@ -59,7 +59,7 @@ class ConversationsAdapter(
         holder.lastMessageTextView.text = if (conversation.messages.isNotEmpty()){
             conversation.messages.last().content
         }else{
-            ""
+            "Aucun message"
         }
 
         holder.timeStampTextView.text = formatTimeAgo(conversation.createdAt)

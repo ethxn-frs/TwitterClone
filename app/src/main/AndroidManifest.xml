@@ -49,7 +49,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".pages.MessagesActivity"/>
+        <activity android:name=".pages.messages.MessagesActivity"/>
         <activity android:name=".pages.conversations.ConversationsActivity"/>
 
         <activity android:name=".pages.LoginActivity" />

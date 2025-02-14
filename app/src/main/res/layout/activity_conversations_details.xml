@@ -62,6 +62,15 @@
                 android:textSize="14sp" />
 
             <TextView
+                android:id="@+id/tvCreator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Créateur: "
+                android:textSize="16sp"
+                android:textColor="@android:color/darker_gray"/>
+
+            <TextView
                 android:id="@+id/idUtilisateurSent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -84,5 +93,27 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/scrollViewConversation" />
+
+    <LinearLayout
+        android:id="@+id/messageInputLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <EditText
+            android:id="@+id/MessageContent"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Ecrire un message" />
+        <Button
+            android:id="@+id/btnSendMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Envoyer" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

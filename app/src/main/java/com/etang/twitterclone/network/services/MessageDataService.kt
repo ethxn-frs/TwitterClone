@@ -9,22 +9,22 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface MessageDataService {
-    @GET("messages/conversation/{id}")
+    @GET("/messages/conversation/{id}")
     suspend fun getMessagesInConversation(
         @Path("id") conversationId: Int
     ): Response<List<Message>>
 
-    @GET("messages/{id}")
+    @GET("/messages/{id}")
     suspend fun getMessageById(
         @Path("id") messageId: Int
     ): Response<Message>
 
-    @POST("messages")
+    @POST("/messages")
     suspend fun sendMessage(
         @Body request: SendMessageRequest
     ): Response<Message>
 
-    @PUT("messages/seenBy/{id}")
+    @PUT("/messages/seenBy/{id}")
     suspend fun markMessageAsSeen(
         @Path("id") messageId: Int,
         @Body request: MarkMessageSeenRequest

@@ -37,4 +37,13 @@ class ConversationRepository() {
             throw Exception("Failed to remove user from conversation")
         }
     }
+
+    suspend fun getConversationById(conversationId: Int): Conversation{
+        val response = service.getConversationById(conversationId)
+        if(response.isSuccessful){
+            return response.body()!!
+        }else{
+            throw Exception("Failed to fetch conversation details")
+        }
+    }
 }
