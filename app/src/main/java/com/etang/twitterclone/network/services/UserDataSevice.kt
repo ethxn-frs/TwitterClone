@@ -6,6 +6,7 @@ import com.etang.twitterclone.network.dto.auth_dto.LoginDto
 import com.etang.twitterclone.network.dto.auth_dto.LoginResponseDto
 import com.etang.twitterclone.network.dto.auth_dto.RegisterDto
 import com.etang.twitterclone.network.dto.auth_dto.RegisterResponseDto
+import com.google.gson.JsonElement
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
@@ -45,6 +46,9 @@ interface UserDataSevice {
     suspend fun unFollowUser(
         @Body request: UnfollowUser
     ): Response<Unit>
+
+    @GET("users")
+    suspend fun getAllUsers(): Response<JsonElement>
 
 }
 

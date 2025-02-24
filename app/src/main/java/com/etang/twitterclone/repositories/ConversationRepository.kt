@@ -1,5 +1,6 @@
 package com.etang.twitterclone.repositories
 
+import android.util.Log
 import com.etang.twitterclone.data.model.Conversation
 import com.etang.twitterclone.network.RetrofitClient
 import com.etang.twitterclone.network.services.ConversationDataService
@@ -14,6 +15,7 @@ class ConversationRepository() {
     suspend fun createConversation(creatorId: Int, participantIds: List<Int>): Conversation {
         val request = CreateConversationRequest(creatorId, participantIds)
         val response = service.createConversation(request)
+        Log.d("Creator + participantsIds", creatorId.toString() + participantIds.toString())
         if (response.isSuccessful) {
             return response.body()!!
         } else {

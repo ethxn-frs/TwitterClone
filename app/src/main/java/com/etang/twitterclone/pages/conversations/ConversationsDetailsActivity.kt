@@ -72,6 +72,7 @@ class ConversationsDetailsActivity : AppCompatActivity() {
         }
 
         observeConversationDetails()
+        //observeMessages()
         conversationViewModel.fetchConversationById(conversationId, currentUserId)
 
     }

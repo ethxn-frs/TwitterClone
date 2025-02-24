@@ -5,6 +5,9 @@ import com.etang.twitterclone.data.model.User
 import com.etang.twitterclone.network.RetrofitClient
 import com.etang.twitterclone.network.services.UserDataSevice
 import com.etang.twitterclone.network.services.UsernameSearchRequest
+import com.google.gson.Gson
+import com.google.gson.JsonElement
+import com.google.gson.reflect.TypeToken
 import retrofit2.Response
 
 class UserRepository {
@@ -23,10 +26,49 @@ class UserRepository {
         }
     }
 
-    suspend fun isFollowingUser(followerId:Int, followingId: Int): Boolean{
-        val response: Response<List<User>> = service.getUserFollowing(followerId)
+    suspend fun isFollowingUser(creatorId: Int, targetId: Int): Boolean{
+        val response: Response<List<User>> = service.getUserFollowing(creatorId)
         return if(response.isSuccessful){
-            true
+            val followingList = response.body() ?: emptyList()
+            followingList.any{ it.id == targetId}
+        }else{
+            false
+        }
+    }
+
+    suspend fun getUserFollowing(creatorId: Int): List<User>? {
+        val response: Response<List<User>> = service.getUserFollowing(creatorId)
+        return if(response.isSuccessful){
+            response.body()
+        }else{
+            null
+        }
+
+    }
+
+    suspend fun getAllUsers(): List<User>{
+        val response: Response<JsonElement> = service.getAllUsers()
+        if(response.isSuccessful){
+            val jsonElement = response.body()
+            if(jsonElement != null && jsonElement.isJsonArray){
+                val jsonArray = jsonElement.asJsonArray
+                if(jsonArray.size() > 0){
+                    val usersJson = jsonArray[0]
+                    return Gson().fromJson(usersJson, object : TypeToken<List<User>>() {}.type)
+
+                }
+            }
+            return emptyList()
+        }else{
+            throw Exception("Failed to fetch all users")
+        }
+    }
+
+    suspend fun isUserFollowingCreator(creatorId: Int, userId: Int): Boolean {
+        val response: Response<List<User>> = service.getUserFollowers(userId)
+        return if(response.isSuccessful){
+            val followers = response.body() ?: emptyList()
+            followers.any{it.id == creatorId}
         }else{
             false
         }

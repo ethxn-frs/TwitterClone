@@ -29,10 +29,8 @@ class MessagesViewModel() : ViewModel() {
     fun sendMessage(conversationId: Int, userId: Int, content: String) {
         viewModelScope.launch {
             try {
-                val newMessage = repository.sendMessage(conversationId, userId, content)
-                val currentList = _messages.value ?: listOf()
-                _messages.value = currentList + newMessage
-                //loadMessagesInConversation(conversationId)
+                repository.sendMessage(conversationId, userId, content)
+                loadMessagesInConversation(conversationId)
             } catch (e: Exception) {
 
             }

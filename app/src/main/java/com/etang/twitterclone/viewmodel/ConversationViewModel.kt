@@ -79,6 +79,11 @@ class ConversationViewModel() : ViewModel() {
                     _error.value = "Vous ne suivez pas \"$username\""
                     return@launch
                 }
+                val followCreator = isUserFollowingCreator(creatorId, user.id)
+                if(!followCreator){
+                    _error.value = "L'utilisateur \"$username\" ne vous suit pas en retour"
+                    return@launch
+                }
                 participantIds.add(user.id)
             }
             if(participantIds.isNotEmpty()){
@@ -90,6 +95,14 @@ class ConversationViewModel() : ViewModel() {
 
 
         }
+    }
+
+    suspend fun isUserFollowingCreator(creatorId: Int, targetId: Int): Boolean{
+        val followCreator = userRepository.isUserFollowingCreator(creatorId, targetId)
+        if(!followCreator){
+            return false
+        }
+        return true
     }
 
 

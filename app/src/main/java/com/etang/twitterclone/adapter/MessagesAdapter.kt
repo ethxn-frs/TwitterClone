@@ -57,13 +57,6 @@ class MessagesAdapter(
         }
         holder.messageContentTextView.text = message.content
 
-        holder.itemView.setOnClickListener {
-            if (message.author?.id == currentUserId){
-                Toast.makeText(holder.itemView.context, "Envoyé à : $otherParticipantName", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(holder.itemView.context, "Reçu de : ${message.author?.firstName}", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 
     override fun getItemCount(): Int = messages.size
