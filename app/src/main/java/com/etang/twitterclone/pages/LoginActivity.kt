@@ -2,17 +2,12 @@ package com.etang.twitterclone.pages
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.etang.twitterclone.R
-import com.etang.twitterclone.pages.main.MainActivity
-import com.etang.twitterclone.pages.post.TimelineActivity
 import com.etang.twitterclone.session.SessionManager
 import com.etang.twitterclone.viewmodel.LoginViewModel
 
@@ -40,7 +35,7 @@ class LoginActivity:AppCompatActivity() {
 
                 sessionManager.saveUserSession(user.token, user.user)
 
-                val intent = Intent(this, TimelineActivity::class.java)
+                val intent = Intent(this, MainActivity::class.java)
                 intent.putExtra("USER_DATA", user)
                 startActivity(intent)
                 finish()

@@ -34,6 +34,10 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    viewBinding {
+        enable = true
+    }
 }
 
 dependencies {
@@ -42,6 +46,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation("androidx.fragment:fragment-ktx:1.5.7") // Vérifie d'avoir cette version ou plus récente
 
     // Retrofit pour les appels API
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
@@ -56,7 +61,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation(libs.androidx.swiperefreshlayout)
 
-    implementation ("com.google.android.material:material:1.10.0")
+    implementation("com.google.android.material:material:1.10.0")
 
 
     testImplementation(libs.junit)

@@ -77,4 +77,17 @@ class PostRepository {
         }
     }
 
+    suspend fun searchPosts(query: String): List<Post> {
+        return try {
+            val response = postDataService.searchPosts(query)
+            if (response.isSuccessful) {
+                response.body() ?: emptyList()
+            } else {
+                emptyList()
+            }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
 }

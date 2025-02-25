@@ -5,10 +5,9 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.etang.twitterclone.R
-import com.etang.twitterclone.pages.post.TimelineActivity
 import com.etang.twitterclone.session.SessionManager
 
-class WelcomeActivity: AppCompatActivity() {
+class WelcomeActivity : AppCompatActivity() {
     private lateinit var sessionManager: SessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +21,7 @@ class WelcomeActivity: AppCompatActivity() {
 
         if (sessionManager.isLoggedIn()) {
             // L'utilisateur est déjà connecté, redirection vers HomeActivity
-            val intent = Intent(this, TimelineActivity::class.java)
+            val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
         }
