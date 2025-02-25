@@ -4,6 +4,7 @@ import android.util.Log
 import com.etang.twitterclone.data.model.Post
 import com.etang.twitterclone.network.RetrofitClient
 import com.etang.twitterclone.network.dto.CreatePostRequest
+import com.etang.twitterclone.network.dto.SearchRequestDto
 import com.etang.twitterclone.network.services.PostDataService
 
 class PostRepository {
@@ -79,7 +80,8 @@ class PostRepository {
 
     suspend fun searchPosts(query: String): List<Post> {
         return try {
-            val response = postDataService.searchPosts(query)
+            val request = SearchRequestDto(query)
+            val response = postDataService.searchPosts(request)
             if (response.isSuccessful) {
                 response.body() ?: emptyList()
             } else {

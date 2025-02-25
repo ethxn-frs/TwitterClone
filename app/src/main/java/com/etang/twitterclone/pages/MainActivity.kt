@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import com.etang.twitterclone.R
 import com.etang.twitterclone.databinding.ActivityMainBinding
 import com.etang.twitterclone.fragments.HomeFragment
+import com.etang.twitterclone.fragments.ProfileFragment
 import com.etang.twitterclone.fragments.SearchFragment
 
 class MainActivity : AppCompatActivity() {
@@ -24,6 +25,7 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.navigation_home -> loadFragment(HomeFragment())
                 R.id.navigation_search -> loadFragment(SearchFragment())
+                R.id.navigation_profile -> loadFragment(ProfileFragment())
                 //R.id.navigation_notifications -> loadFragment(NotificationsFragment())
                 //R.id.navigation_messages -> loadFragment(MessagesFragment())
             }

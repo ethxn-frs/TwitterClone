@@ -2,6 +2,7 @@ package com.etang.twitterclone.network.services
 
 import com.etang.twitterclone.data.model.Post
 import com.etang.twitterclone.network.dto.CreatePostRequest
+import com.etang.twitterclone.network.dto.SearchRequestDto
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -9,7 +10,6 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
-import retrofit2.http.Query
 
 interface PostDataService {
 
@@ -31,7 +31,7 @@ interface PostDataService {
     @PUT("posts/{id}/delete")
     suspend fun deletePostById(@Path("id") postId: Int): Void
 
-    @GET("/posts/search")
-    suspend fun searchPosts(@Query("query") query: String): Response<List<Post>>
+    @POST("/posts/search")
+    suspend fun searchPosts(@Body request: SearchRequestDto): Response<List<Post>>
 
 }
