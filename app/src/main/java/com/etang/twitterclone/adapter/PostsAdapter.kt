@@ -189,7 +189,7 @@ class PostsAdapter(
             btnComment.setOnClickListener {
                 showCommentBottomSheet(post.id)
             }
-            
+
         }
 
         private fun updateLikeButtonIcon(isLiked: Boolean) {
@@ -292,6 +292,4 @@ class PostsAdapter(
             "unknown"
         }
     }
-
-
 }

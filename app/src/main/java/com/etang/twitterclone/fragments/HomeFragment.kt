@@ -5,8 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -16,7 +14,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.etang.twitterclone.R
 import com.etang.twitterclone.adapter.PostsAdapter
 import com.etang.twitterclone.data.model.Post
-import com.etang.twitterclone.pages.ProfileActivity
 import com.etang.twitterclone.pages.post.CreatePostActivity
 import com.etang.twitterclone.session.SessionManager
 import com.etang.twitterclone.viewmodel.PostViewModel
@@ -41,14 +38,6 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         sessionManager = SessionManager(requireContext())
-
-        val headerLayout =
-            view.findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.headerLayout)
-        val tvTitle = headerLayout.findViewById<TextView>(R.id.tvHeaderTitle)
-        tvTitle.text = "Post"
-
-        val ivSettings = headerLayout.findViewById<ImageView>(R.id.ivSettings)
-
         recyclerView = view.findViewById(R.id.recyclerViewPosts)
         adapter = PostsAdapter(
             sessionManager = sessionManager,
@@ -71,11 +60,6 @@ class HomeFragment : Fragment() {
 
         observeViewModel()
         viewModel.fetchPosts()
-
-        ivSettings.setOnClickListener {
-            val intent = Intent(requireContext(), ProfileActivity::class.java)
-            startActivity(intent)
-        }
 
         val fabCreatePost = view.findViewById<FloatingActionButton>(R.id.fabCreatePost)
         fabCreatePost.setOnClickListener {

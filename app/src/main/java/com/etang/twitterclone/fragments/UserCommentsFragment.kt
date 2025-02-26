@@ -8,14 +8,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.etang.twitterclone.adapter.PostsAdapter
-import com.etang.twitterclone.databinding.FragmentUserPostsBinding
+import com.etang.twitterclone.databinding.FragmentUserCommentsBinding
 import com.etang.twitterclone.repositories.UserRepository
 import com.etang.twitterclone.session.SessionManager
 import kotlinx.coroutines.launch
 
-class UserPostsFragment : Fragment() {
+class UserCommentsFragment : Fragment() {
 
-    private var _binding: FragmentUserPostsBinding? = null
+    private var _binding: FragmentUserCommentsBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: PostsAdapter
     private lateinit var sessionManager: SessionManager
@@ -25,7 +25,7 @@ class UserPostsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentUserPostsBinding.inflate(inflater, container, false)
+        _binding = FragmentUserCommentsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -39,14 +39,14 @@ class UserPostsFragment : Fragment() {
         binding.recyclerViewPosts.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewPosts.adapter = adapter
 
-        fetchUserPosts()
+        fetchUserComments()
     }
 
-    private fun fetchUserPosts() {
+    private fun fetchUserComments() {
         val userId = sessionManager.getUserId()
 
         lifecycleScope.launch {
-            val posts = userRepository.getUserPosts(userId)
+            val posts = userRepository.getUserComments(userId)
             adapter.submitList(posts)
         }
     }

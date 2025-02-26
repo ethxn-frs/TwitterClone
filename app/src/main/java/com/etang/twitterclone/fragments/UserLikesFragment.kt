@@ -8,14 +8,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.etang.twitterclone.adapter.PostsAdapter
+import com.etang.twitterclone.databinding.FragmentUserLikesBinding
 import com.etang.twitterclone.databinding.FragmentUserPostsBinding
 import com.etang.twitterclone.repositories.UserRepository
 import com.etang.twitterclone.session.SessionManager
 import kotlinx.coroutines.launch
 
-class UserPostsFragment : Fragment() {
+class UserLikesFragment : Fragment() {
 
-    private var _binding: FragmentUserPostsBinding? = null
+    private var _binding: FragmentUserLikesBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: PostsAdapter
     private lateinit var sessionManager: SessionManager
@@ -25,7 +26,7 @@ class UserPostsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentUserPostsBinding.inflate(inflater, container, false)
+        _binding = FragmentUserLikesBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -39,14 +40,14 @@ class UserPostsFragment : Fragment() {
         binding.recyclerViewPosts.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewPosts.adapter = adapter
 
-        fetchUserPosts()
+        fetchUserLikes()
     }
 
-    private fun fetchUserPosts() {
+    private fun fetchUserLikes() {
         val userId = sessionManager.getUserId()
 
         lifecycleScope.launch {
-            val posts = userRepository.getUserPosts(userId)
+            val posts = userRepository.getUserLikedPosts(userId)
             adapter.submitList(posts)
         }
     }

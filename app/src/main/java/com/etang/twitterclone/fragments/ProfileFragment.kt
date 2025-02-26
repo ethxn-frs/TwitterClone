@@ -17,8 +17,7 @@ class ProfileFragment : Fragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         return binding.root
@@ -37,16 +36,34 @@ class ProfileFragment : Fragment() {
             website = "https://ethanfrancois.fr",
             birthDate = "2003-01-01",
             createdAt = "2020-01-01",
-            coverPictureUrl = "https://example.com/cover.jpg",
-            profilePictureUrl = "https://example.com/profile.jpg",
+            coverPictureUrl = "https://static.vecteezy.com/system/resources/previews/045/545/855/non_2x/purple-yellow-hand-drawn-space-illustration-twitter-header-free-editor_template.jpeg?last_updated=1716282447 2940w, https://static.vecteezy.com/system/resources/previews/045/545/855/large_2x/purple-yellow-hand-drawn-space-illustration-twitter-header-free-editor_template.jpeg?last_updated=1716282447 5880w",
+            profilePictureUrl = "https://pbs.twimg.com/profile_images/438072985115959299/uWVK718p.jpeg",
             followersCount = 123,
             followingCount = 456
+
         )
 
         bindUserProfile(user)
         val tabTitles = arrayOf("Posts", "Réponses", "Likes")
         val adapter = ProfilePagerAdapter(this)
         binding.viewPagerProfile.adapter = adapter
+
+        binding.ivProfilePicture.setOnClickListener {
+            val dialog = ProfilePictureDialogFragment(
+                user.profilePictureUrl
+                    ?: "https://pbs.twimg.com/profile_images/438072985115959299/uWVK718p.jpeg"
+            )
+            dialog.show(parentFragmentManager, "ProfilePictureDialog")
+        }
+
+        binding.ivCover.setOnClickListener {
+            val dialog = ProfilePictureDialogFragment(
+                user.profilePictureUrl
+                    ?: "https://pbs.twimg.com/profile_images/438072985115959299/uWVK718p.jpeg"
+            )
+            dialog.show(parentFragmentManager, "CoverPictureDialog")
+        }
+
 
         TabLayoutMediator(binding.tabLayout, binding.viewPagerProfile) { tab, position ->
             tab.text = tabTitles[position]
@@ -59,8 +76,8 @@ class ProfileFragment : Fragment() {
         binding.tvBio.text = user.bio
         binding.tvLocation.text = user.location
         binding.tvWebsite.text = user.website
-        binding.tvBirthdate.text = user.birthDate
-        binding.tvJoinedDate.text = "A rejoint TwitterClone le ${user.createdAt}"
+        binding.tvBirthdate.text = "\uD83C\uDF82 " + user.birthDate
+        binding.tvJoinedDate.text = "\uD83D\uDCC5 Insrit le ${user.createdAt}"
         binding.tvFollowersCount.text = user.followersCount.toString()
         binding.tvFollowingCount.text = user.followingCount.toString()
 
