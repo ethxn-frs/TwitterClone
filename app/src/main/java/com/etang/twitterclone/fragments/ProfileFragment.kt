@@ -50,16 +50,14 @@ class ProfileFragment : Fragment() {
 
         binding.ivProfilePicture.setOnClickListener {
             val dialog = ProfilePictureDialogFragment(
-                user.profilePictureUrl
-                    ?: "https://pbs.twimg.com/profile_images/438072985115959299/uWVK718p.jpeg"
+                "https://pbs.twimg.com/profile_images/438072985115959299/uWVK718p.jpeg"
             )
             dialog.show(parentFragmentManager, "ProfilePictureDialog")
         }
 
         binding.ivCover.setOnClickListener {
-            val dialog = ProfilePictureDialogFragment(
-                user.profilePictureUrl
-                    ?: "https://pbs.twimg.com/profile_images/438072985115959299/uWVK718p.jpeg"
+            val dialog = CoverPictureDialogFragment(
+                "https://pbs.twimg.com/profile_images/438072985115959299/uWVK718p.jpeg"
             )
             dialog.show(parentFragmentManager, "CoverPictureDialog")
         }

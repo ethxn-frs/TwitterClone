@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_home"
+        android:icon="@drawable/ic_home_24px"
+        android:title="Accueil" />
+
+    <item
+        android:id="@+id/menu_search"
+        android:icon="@drawable/ic_search_24px"
+        android:title="Rechercher" />
+
+    <item
+        android:id="@+id/menu_notifications"
+        android:icon="@drawable/ic_notifications_24px"
+        android:title="Notifications" />
+
+    <item
+        android:id="@+id/menu_messages"
+        android:icon="@drawable/ic_mail_24px"
+        android:title="Messages" />
+
+    <item
+        android:id="@+id/menu_bookmarks"
+        android:icon="@drawable/ic_home_24px"
+        android:title="Signets" />
+
+    <item
+        android:id="@+id/menu_profile"
+        android:icon="@drawable/ic_profile"
+        android:title="Profil" />
+
+    <item
+        android:id="@+id/menu_settings"
+        android:icon="@drawable/ic_settings_24px"
+        android:title="Paramètres" />
+
+    <item
+        android:id="@+id/menu_logout"
+        android:icon="@drawable/ic_arrow_back"
+        android:title="Déconnexion" />
+</menu>

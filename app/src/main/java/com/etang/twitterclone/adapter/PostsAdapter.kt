@@ -2,7 +2,7 @@ package com.etang.twitterclone.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +18,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.etang.twitterclone.R
 import com.etang.twitterclone.data.model.Post
-import com.etang.twitterclone.pages.post.PostDetailsActivity
+import com.etang.twitterclone.fragments.PostDetailsFragment
 import com.etang.twitterclone.repositories.PostRepository
 import com.etang.twitterclone.session.SessionManager
 import com.etang.twitterclone.viewmodel.PostViewModel
@@ -181,10 +181,20 @@ class PostsAdapter(
             }
 
             itemView.setOnClickListener {
-                val intent = Intent(itemView.context, PostDetailsActivity::class.java)
-                intent.putExtra("POST_ID", post.id)
-                itemView.context.startActivity(intent)
+                val fragment = PostDetailsFragment().apply {
+                    arguments = Bundle().apply {
+                        putInt("POST_ID", post.id)
+                    }
+                }
+
+                val activity = itemView.context as? AppCompatActivity
+                activity?.supportFragmentManager
+                    ?.beginTransaction()
+                    ?.replace(R.id.fragmentContainer, fragment)
+                    ?.addToBackStack(null)
+                    ?.commit()
             }
+
 
             btnComment.setOnClickListener {
                 showCommentBottomSheet(post.id)

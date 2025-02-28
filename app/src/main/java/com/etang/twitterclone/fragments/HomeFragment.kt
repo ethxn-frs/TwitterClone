@@ -1,5 +1,6 @@
 package com.etang.twitterclone.fragments
 
+import android.animation.ValueAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -66,6 +67,24 @@ class HomeFragment : Fragment() {
             val intent = Intent(requireContext(), CreatePostActivity::class.java)
             startActivity(intent)
         }
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                val topBar = requireActivity().findViewById<View>(R.id.topBar)
+
+                if (dy > 0) {
+                    // Scroll vers le bas → on cache la Top Bar et enlève la marge
+                    topBar.animate().translationY(-topBar.height.toFloat()).setDuration(200).start()
+                    updateSwipeRefreshMargin(false) // Enlève la marge
+                } else if (dy < 0) {
+                    // Scroll vers le haut → on affiche la Top Bar et remet la marge
+                    topBar.animate().translationY(0f).setDuration(200).start()
+                    updateSwipeRefreshMargin(true) // Remet la marge
+                }
+            }
+        })
     }
 
     private fun observeViewModel() {
@@ -97,4 +116,22 @@ class HomeFragment : Fragment() {
         }
         startActivity(Intent.createChooser(shareIntent, "Share post via"))
     }
+
+    private fun updateSwipeRefreshMargin(showTopBar: Boolean) {
+        val swipeRefreshLayout =
+            view?.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout) ?: return
+        val newMarginTop = if (showTopBar) 100 else 0
+
+        val layoutParams = swipeRefreshLayout.layoutParams as ViewGroup.MarginLayoutParams
+
+        ValueAnimator.ofInt(layoutParams.topMargin, newMarginTop).apply {
+            duration = 200
+            addUpdateListener { animation ->
+                layoutParams.topMargin = animation.animatedValue as Int
+                swipeRefreshLayout.layoutParams = layoutParams
+            }
+            start()
+        }
+    }
+
 }

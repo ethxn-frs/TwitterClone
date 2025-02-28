@@ -9,12 +9,12 @@
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="56dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- RecyclerView pour afficher les posts -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewPosts"
             android:layout_width="match_parent"
@@ -22,6 +22,7 @@
             android:clipToPadding="false"
             android:padding="16dp" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
     <!-- FloatingActionButton pour créer un post -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton

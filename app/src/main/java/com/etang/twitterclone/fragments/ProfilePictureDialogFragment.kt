@@ -26,9 +26,8 @@ class ProfilePictureDialogFragment(private val imageUrl: String) : DialogFragmen
 
         Glide.with(this)
             .load(imageUrl)
-            .into(binding.ivFullScreenProfilePicture)
+            .into(binding.ivFullScreenProfilePicture)  // 🛠️ Vérifie que l'ID est bien celui du XML
 
-        // Fermer le dialog quand on clique en dehors de l’image
         binding.root.setOnClickListener {
             dismiss()
         }
