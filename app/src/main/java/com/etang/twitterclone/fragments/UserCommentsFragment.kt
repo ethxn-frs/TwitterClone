@@ -20,6 +20,7 @@ class UserCommentsFragment : Fragment() {
     private lateinit var adapter: PostsAdapter
     private lateinit var sessionManager: SessionManager
     private val userRepository = UserRepository()
+    private var userId: Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,6 +34,7 @@ class UserCommentsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         sessionManager = SessionManager(requireContext())
+        userId = arguments?.getInt("USER_ID") ?: sessionManager.getUserId()
 
         adapter = PostsAdapter(sessionManager, {}, {})
 
@@ -43,8 +45,6 @@ class UserCommentsFragment : Fragment() {
     }
 
     private fun fetchUserComments() {
-        val userId = sessionManager.getUserId()
-
         lifecycleScope.launch {
             val posts = userRepository.getUserComments(userId)
             adapter.submitList(posts)
@@ -55,4 +55,15 @@ class UserCommentsFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    companion object {
+        fun newInstance(userId: Int): UserPostsFragment {
+            val fragment = UserPostsFragment()
+            val args = Bundle()
+            args.putInt("USER_ID", userId)
+            fragment.arguments = args
+            return fragment
+        }
+    }
 }
+

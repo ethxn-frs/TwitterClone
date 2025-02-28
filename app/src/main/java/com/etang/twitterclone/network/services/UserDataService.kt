@@ -23,4 +23,7 @@ interface UserDataService {
     @GET("/users/{id}/likes")
     suspend fun getUserLikedPosts(@Path("id") userId: Int): Response<List<Post>>
 
+    @GET("/users/{id}")
+    suspend fun getUserById(@Path("id") userId: Int): Response<User>
+
 }

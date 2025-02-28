@@ -12,7 +12,6 @@ class UserRepository {
 
     private val userDataService = RetrofitClient.instance.create(UserDataService::class.java)
 
-
     suspend fun searchUsers(query: String): List<User> {
         return try {
             val request = SearchRequestDto(query)
@@ -71,5 +70,19 @@ class UserRepository {
             emptyList()
         }
     }
+
+    suspend fun getUserById(userId: Int): User? {
+        return try {
+            val response = userDataService.getUserById(userId)
+            if (response.isSuccessful) {
+                response.body()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
 
 }

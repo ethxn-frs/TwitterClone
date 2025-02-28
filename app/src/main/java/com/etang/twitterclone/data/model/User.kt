@@ -12,4 +12,4 @@ data class User(
     val birthDate: String,
     val createdAt: String,
     val updatedAt: String?
-): Serializable
+) : Serializable

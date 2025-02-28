@@ -20,6 +20,7 @@ class UserPostsFragment : Fragment() {
     private lateinit var adapter: PostsAdapter
     private lateinit var sessionManager: SessionManager
     private val userRepository = UserRepository()
+    private var userId: Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,6 +34,7 @@ class UserPostsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         sessionManager = SessionManager(requireContext())
+        userId = arguments?.getInt("USER_ID") ?: sessionManager.getUserId()
 
         adapter = PostsAdapter(sessionManager, {}, {})
 
@@ -43,8 +45,6 @@ class UserPostsFragment : Fragment() {
     }
 
     private fun fetchUserPosts() {
-        val userId = sessionManager.getUserId()
-
         lifecycleScope.launch {
             val posts = userRepository.getUserPosts(userId)
             adapter.submitList(posts)
@@ -54,5 +54,15 @@ class UserPostsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        fun newInstance(userId: Int): UserPostsFragment {
+            val fragment = UserPostsFragment()
+            val args = Bundle()
+            args.putInt("USER_ID", userId)
+            fragment.arguments = args
+            return fragment
+        }
     }
 }

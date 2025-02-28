@@ -5,16 +5,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.etang.twitterclone.adapter.ProfilePagerAdapter
 import com.etang.twitterclone.data.dto.UserProfileDto
 import com.etang.twitterclone.databinding.FragmentProfileBinding
+import com.etang.twitterclone.repositories.UserRepository
+import com.etang.twitterclone.session.SessionManager
 import com.google.android.material.tabs.TabLayoutMediator
+import kotlinx.coroutines.launch
 
 class ProfileFragment : Fragment() {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
+    private val userRepository = UserRepository()
+    private lateinit var sessionManager: SessionManager
+    private var userId: Int = 0  // ID de l'utilisateur du profil affiché
+    private var currentUserId: Int = 0  // ID de l'utilisateur connecté
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -26,61 +34,51 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val user = UserProfileDto(
-            id = 1,
-            firstName = "John",
-            lastName = "Doe",
-            username = "johndoe",
-            bio = "Passionné par la tech 🚀",
-            location = "Paris, France",
-            website = "https://ethanfrancois.fr",
-            birthDate = "2003-01-01",
-            createdAt = "2020-01-01",
-            coverPictureUrl = "https://static.vecteezy.com/system/resources/previews/045/545/855/non_2x/purple-yellow-hand-drawn-space-illustration-twitter-header-free-editor_template.jpeg?last_updated=1716282447 2940w, https://static.vecteezy.com/system/resources/previews/045/545/855/large_2x/purple-yellow-hand-drawn-space-illustration-twitter-header-free-editor_template.jpeg?last_updated=1716282447 5880w",
-            profilePictureUrl = "https://pbs.twimg.com/profile_images/438072985115959299/uWVK718p.jpeg",
-            followersCount = 123,
-            followingCount = 456
+        sessionManager = SessionManager(requireContext())
+        currentUserId = sessionManager.getUserId()
 
-        )
+        // Récupérer l'ID du profil à afficher depuis les arguments
+        userId = arguments?.getInt("USER_ID") ?: currentUserId
 
-        bindUserProfile(user)
-        val tabTitles = arrayOf("Posts", "Réponses", "Likes")
-        val adapter = ProfilePagerAdapter(this)
+        fetchUserProfile(userId)
+
+        val adapter = ProfilePagerAdapter(this, userId)
         binding.viewPagerProfile.adapter = adapter
 
-        binding.ivProfilePicture.setOnClickListener {
-            val dialog = ProfilePictureDialogFragment(
-                "https://pbs.twimg.com/profile_images/438072985115959299/uWVK718p.jpeg"
-            )
-            dialog.show(parentFragmentManager, "ProfilePictureDialog")
-        }
-
-        binding.ivCover.setOnClickListener {
-            val dialog = CoverPictureDialogFragment(
-                "https://pbs.twimg.com/profile_images/438072985115959299/uWVK718p.jpeg"
-            )
-            dialog.show(parentFragmentManager, "CoverPictureDialog")
-        }
-
-
+        val tabTitles = arrayOf("Posts", "Réponses", "Likes")
         TabLayoutMediator(binding.tabLayout, binding.viewPagerProfile) { tab, position ->
             tab.text = tabTitles[position]
         }.attach()
     }
 
+    private fun fetchUserProfile(id: Int) {
+        lifecycleScope.launch {
+            val user = userRepository.getUserById(id)
+            if (user != null) {
+                bindUserProfile(user)
+            }
+        }
+    }
+
     private fun bindUserProfile(user: UserProfileDto) {
         binding.tvFullName.text = "${user.firstName} ${user.lastName}"
         binding.tvUsername.text = "@${user.username}"
-        binding.tvBio.text = user.bio
-        binding.tvLocation.text = user.location
-        binding.tvWebsite.text = user.website
-        binding.tvBirthdate.text = "\uD83C\uDF82 " + user.birthDate
-        binding.tvJoinedDate.text = "\uD83D\uDCC5 Insrit le ${user.createdAt}"
+        binding.tvBio.text = user.bio ?: ""
+        binding.tvLocation.text = user.location ?: ""
+        binding.tvWebsite.text = user.website ?: ""
+        binding.tvBirthdate.text = "🎂 " + user.birthDate
+        binding.tvJoinedDate.text = "📅 Inscrit le ${user.createdAt}"
         binding.tvFollowersCount.text = user.followersCount.toString()
         binding.tvFollowingCount.text = user.followingCount.toString()
 
         Glide.with(this).load(user.coverPictureUrl).into(binding.ivCover)
         Glide.with(this).load(user.profilePictureUrl).into(binding.ivProfilePicture)
+
+        if (user.id == currentUserId) {
+            binding.btnFollow.text = "Modifier Profil"
+        } else {
+            binding.btnFollow.text = "Suivre"
+        }
     }
 
     override fun onDestroyView() {

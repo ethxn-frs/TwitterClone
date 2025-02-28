@@ -34,17 +34,11 @@ class SessionManager(context: Context) {
     fun getUserId(): Int {
         val userJson = sharedPreferences.getString("USER", null)
         return gson.fromJson(userJson, User::class.java).id
-
     }
 
     fun logout() {
         val editor = sharedPreferences.edit()
         editor.clear() // Supprime toutes les données stockées
-        editor.apply()
-    }
-
-    fun clearSession() {
-        editor.clear()
         editor.apply()
     }
 
