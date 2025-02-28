@@ -1,6 +1,7 @@
 package com.etang.twitterclone.pages.messages
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,6 +18,7 @@ class MessagesActivity : AppCompatActivity() {
     private lateinit var sessionManager: SessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d("MessagesActivity", "Ici")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_messages)
 

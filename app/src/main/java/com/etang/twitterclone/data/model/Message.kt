@@ -6,4 +6,5 @@ data class Message(
     val content: String,
     val author: User,
     val seenBy: List<User>,
+    var reaction: String?
 )

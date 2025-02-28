@@ -47,9 +47,8 @@ class ConversationViewModel() : ViewModel() {
     fun fetchConversationById(conversationId: Int, userId: Int){
         viewModelScope.launch {
             try {
-                val conversations = conversationRepository.getConversationById(conversationId)
-                _conversationDetails.value =conversations
-
+                val conversations = getConversationById(conversationId)
+                _conversationDetails.value = conversations
                 val (creator, participants) = extractCreatorAndParticipants(conversations, currentUserId = userId)
                 _creatorUsername.value = creator?.username ?: "Inconnu"
                 _participants.value = participants
@@ -57,6 +56,10 @@ class ConversationViewModel() : ViewModel() {
                 _error.value = "Failed to load conversation details: ${e.message}"
             }
         }
+    }
+
+    suspend fun getConversationById(conversationId: Int): Conversation {
+        return conversationRepository.getConversationById(conversationId)
     }
 
     private fun extractCreatorAndParticipants(conv: Conversation, currentUserId: Int): Pair<User?, List<User>>{

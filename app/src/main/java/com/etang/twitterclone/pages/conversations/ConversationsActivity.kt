@@ -1,6 +1,7 @@
 package com.etang.twitterclone.pages.conversations
 
 import ConversationsAdapter
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -31,6 +32,7 @@ class ConversationsActivity : AppCompatActivity(){
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var sessionManager: SessionManager
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_conversations)
@@ -114,7 +116,7 @@ class ConversationsActivity : AppCompatActivity(){
 
     private fun observeViewModel(){
         viewModel.userConversations.observe(this){conversations ->
-            adapter.submitList(conversations)
+            adapter.updateData(conversations)
             swipeRefreshLayout.isRefreshing = false
         }
     }

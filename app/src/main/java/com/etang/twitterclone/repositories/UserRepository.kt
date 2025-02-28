@@ -65,10 +65,10 @@ class UserRepository {
     }
 
     suspend fun isUserFollowingCreator(creatorId: Int, userId: Int): Boolean {
-        val response: Response<List<User>> = service.getUserFollowers(userId)
+        val response: Response<List<User>> = service.getUserFollowers(creatorId)
         return if(response.isSuccessful){
             val followers = response.body() ?: emptyList()
-            followers.any{it.id == creatorId}
+            followers.any{it.id == userId}
         }else{
             false
         }

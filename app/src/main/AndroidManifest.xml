@@ -63,7 +63,8 @@
             android:exported="true" />
         <activity
             android:name=".pages.conversations.ConversationsDetailsActivity"
-            android:label="Conversation Details"/>
+            android:label="Conversation Details"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".pages.conversations.CreateConversationActivity"/>
 

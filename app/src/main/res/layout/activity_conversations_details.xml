@@ -9,7 +9,7 @@
     <!-- En-tête pour afficher le titre -->
     <include
         android:id="@+id/headerLayout"
-        layout="@layout/layout_header_profile"
+        layout="@layout/layout_header_conversations"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -20,12 +20,14 @@
     <ScrollView
         android:id="@+id/scrollViewConversation"
         android:layout_width="0dp"
-        android:layout_height="180dp"
-        app:layout_constraintBottom_toTopOf="@id/recyclerViewComments"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        app:layout_constraintBottom_toTopOf="@id/recyclerViewMessages"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/headerLayout"
-        tools:ignore="NotSibling">
+        android:layout_marginBottom="8dp"
+        android:maxHeight="200dp"
+        android:fillViewport="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -70,17 +72,6 @@
                 android:text="Créateur: "
                 android:textSize="16sp"
                 android:textColor="@android:color/darker_gray"/>
-
-            <TextView
-                android:id="@+id/idUtilisateurSent"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Send at :"
-                android:textSize="16sp"
-                android:textColor="@android:color/white"
-                app:layout_constraintTop_toBottomOf="@id/scrollViewConversation"
-                app:layout_constraintStart_toStartOf="parent"
-                android:layout_margin="16dp"/>
         </LinearLayout>
     </ScrollView>
 
@@ -88,12 +79,13 @@
         android:id="@+id/recyclerViewMessages"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:padding="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/scrollViewConversation"
+        app:layout_constraintBottom_toTopOf="@id/messageInputLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/scrollViewConversation" />
+        android:clipToPadding="false"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"/>
 
     <LinearLayout
         android:id="@+id/messageInputLayout"
@@ -109,7 +101,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Ecrire un message" />
+            android:hint="Ecrire un message"
+            android:padding="8dp"/>
         <Button
             android:id="@+id/btnSendMessage"
             android:layout_width="wrap_content"

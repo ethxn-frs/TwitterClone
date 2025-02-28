@@ -1,5 +1,6 @@
 package com.etang.twitterclone.pages.conversations
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -58,7 +59,7 @@ class CreateConversationActivity : AppCompatActivity() {
         btnCreateConversation.setOnClickListener {
             val participantsText = allParticipants.text.toString().trim()
             if(participantsText.isNotEmpty()){
-                val usernames = participantsText.split(",").map {it.trim()}.filter { it.isNotEmpty() }
+                val usernames = participantsText.split(",", "(il vous suit)").map {it.trim()}.filter { it.isNotEmpty() }
                 conversationViewModel.createConversation(creatorId, usernames)
             }else{
                 Toast.makeText(this, "Veuillez saisir au moins un username", Toast.LENGTH_SHORT).show()
@@ -66,6 +67,7 @@ class CreateConversationActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun loadFollowersSuggestions(currentUserId: Int){
         lifecycleScope.launch {
             try {
@@ -75,6 +77,7 @@ class CreateConversationActivity : AppCompatActivity() {
                 val followerUsernames = followers.map { it.username }
                 val suggestionsUsernames = allUsers.filter { it.username !in followerUsernames }
                 val limitedSuggestions = mutableListOf<String>()
+
                 for(user in suggestionsUsernames.take(5)){
                     val follows = conversationViewModel.isUserFollowingCreator(currentUserId, user.id)
                     if(!follows){
@@ -104,23 +107,21 @@ class CreateConversationActivity : AppCompatActivity() {
                     this@CreateConversationActivity,
                     android.R.layout.simple_dropdown_item_1line,
                     items
-                ){
-                    override fun isEnabled(position: Int): Boolean{
-                        return when (position){
-                            0, followerUsernames.size + 1 -> false
-                            else -> true
+                ){}
+                allParticipants.setAdapter(adapter)
+                allParticipants.setOnItemClickListener{ _, _, position, _ ->
+                    val selectedUser = adapter.getItem(position)?.trim()
+                    if(selectedUser != null && !selectedUser.startsWith("Liste") && !selectedUser.startsWith("------------")){
+                        val currentText = allParticipants.text.toString()
+                        val usernames = currentText.split(",").map{it.trim()}.filter {it.isNotEmpty()}
+                        if(!usernames.contains(selectedUser)){
+                            val newText = if (currentText.isEmpty()) selectedUser else "$currentText, $selectedUser"
+                            allParticipants.setText(newText)
+                            allParticipants.setSelection(allParticipants.text.length)
                         }
-                    }
-                    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View{
-                        val view = super.getDropDownView(position, convertView, parent)
-                        when(position){
-                            0, followerUsernames.size + 1 -> (view as TextView).setTextColor(Color.GRAY)
-                            else -> (view as TextView).setTextColor(Color.BLACK)
-                        }
-                        return view
+
                     }
                 }
-                allParticipants.setAdapter(adapter)
             }catch(e:Exception){
                 e.printStackTrace()
                 Toast.makeText(this@CreateConversationActivity, "Erreur lors du chargement des utilisateurs", Toast.LENGTH_SHORT).show()

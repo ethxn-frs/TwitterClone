@@ -3,6 +3,8 @@ package com.etang.twitterclone.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
@@ -27,6 +29,8 @@ class MessagesAdapter(
             null
         }
         val messageContentTextView: TextView = itemView.findViewById(R.id.messageContent)
+        val btnReaction: ImageView = itemView.findViewById(R.id.btnReaction)
+        val tvReaction: TextView = itemView.findViewById(R.id.tvReaction)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -56,6 +60,34 @@ class MessagesAdapter(
             } ?: "Inconnu"
         }
         holder.messageContentTextView.text = message.content
+
+        holder.btnReaction.setOnClickListener { view ->
+            showEmoji(view, holder, message)
+        }
+
+        holder.tvReaction.text = message.reaction ?: ""
+
+    }
+
+    private fun showEmoji(
+        view: View?,
+        holder: MessageViewHolder,
+        message: Message
+    ) {
+        val popUpMenu = PopupMenu(view?.context, view)
+        val emojis = listOf("👍", "❤️", "😂", "😮", "😢", "😡")
+        for (emoji in emojis){
+            popUpMenu.menu.add(emoji)
+        }
+
+        popUpMenu.setOnMenuItemClickListener { item->
+            val selectedEmoji = item.title.toString()
+            message.reaction = selectedEmoji
+            holder.tvReaction.text = selectedEmoji
+            notifyDataSetChanged()
+            true
+        }
+        popUpMenu.show()
 
     }
 

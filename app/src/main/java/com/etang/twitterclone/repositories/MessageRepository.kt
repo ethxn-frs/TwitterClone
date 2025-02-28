@@ -1,10 +1,14 @@
 package com.etang.twitterclone.repositories
 
+import android.provider.Settings.Global
 import com.etang.twitterclone.data.model.Message
 import com.etang.twitterclone.network.RetrofitClient
 import com.etang.twitterclone.network.services.MarkMessageSeenRequest
 import com.etang.twitterclone.network.services.MessageDataService
 import com.etang.twitterclone.network.services.SendMessageRequest
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 
 class MessageRepository() {
 
@@ -28,11 +32,11 @@ class MessageRepository() {
         }
     }
 
-    suspend fun sendMessage(conversationId: Int, userId: Int, content: String): Message {
+    fun sendMessage(conversationId: Int, userId: Int, content: String): Deferred<Message> = GlobalScope.async {
         val request = SendMessageRequest(conversationId, userId, content)
         val response = service.sendMessage(request)
         if (response.isSuccessful) {
-            return response.body()!!
+            return@async response.body()!!
         } else {
             throw Exception("Failed to send message")
         }

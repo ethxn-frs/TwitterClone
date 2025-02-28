@@ -2,10 +2,14 @@ package com.etang.twitterclone.pages.conversations
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.Toolbar
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -41,16 +45,23 @@ class ConversationsDetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_conversations_details)
 
+        sessionManager = SessionManager(this)
+        val currentUserId = sessionManager.getUserId()
+
+        val ivBack = findViewById<ImageView>(R.id.ivBack)
+        ivBack.setOnClickListener{
+            finish()
+        }
+
         val headerLayout = findViewById<ConstraintLayout>(R.id.headerLayout)
         val tvHeaderTitle = headerLayout.findViewById<TextView>(R.id.tvHeaderTitle)
         tvHeaderTitle.text = "Message"
 
-        sessionManager = SessionManager(this)
-        val currentUserId = sessionManager.getUserId()
-
         recyclerViewMessages = findViewById(R.id.recyclerViewMessages)
         messagesAdapter = MessagesAdapter(currentUserId, "Inconnu")
-        recyclerViewMessages.layoutManager = LinearLayoutManager(this)
+        val layoutManager = LinearLayoutManager(this)
+        layoutManager.stackFromEnd = true
+        recyclerViewMessages.layoutManager = layoutManager
         recyclerViewMessages.adapter = messagesAdapter
 
         messageContent = findViewById(R.id.MessageContent)
@@ -66,16 +77,18 @@ class ConversationsDetailsActivity : AppCompatActivity() {
             }
         }
         val conversationId = intent.getIntExtra("CONVERSATION_ID", -1)
+
         if(conversationId == -1){
             finish()
             return
         }
-
         observeConversationDetails()
-        //observeMessages()
+        observeMessages()
         conversationViewModel.fetchConversationById(conversationId, currentUserId)
 
     }
+
+
     private fun observeConversationDetails(){
         conversationViewModel.conversationDetails.observe(this) { conv ->
             if(conv != null){
@@ -96,8 +109,11 @@ class ConversationsDetailsActivity : AppCompatActivity() {
 
     private fun observeMessages(){
         messagesViewModel.messages.observe(this){ messages ->
+            Log.d("MessagesDebug", "Messages affichés: ${messages.map { it.content }}")
             messagesAdapter.submitList(messages)
-            recyclerViewMessages.scrollToPosition(messages.size - 1)
+            recyclerViewMessages.post{
+                recyclerViewMessages.scrollToPosition(messages.size - 1)
+            }
         }
 
     }
@@ -108,15 +124,12 @@ class ConversationsDetailsActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.tvCreatedAt).text = "Created at: ${formatDateTime(conversation.createdAt)}"
 
         val currentUserId = sessionManager.getUserId()
+
         val creator: User? = conversation.users.firstOrNull {it.id == currentUserId}
         val participants = conversation.users.joinToString(",") { it.username }
         findViewById<TextView>(R.id.tvCreator)?.text = "Créateur : ${creator?.username ?: "Inconnu"}"
 
         findViewById<TextView>(R.id.tvParticipants)?.text = "Participants : $participants"
-
-        val sender: User? = conversation.users.firstOrNull { it.id != currentUserId }
-        findViewById<TextView>(R.id.idUtilisateurSent)?.text = "Message envoyé à : ${sender?.firstName ?: "Inconnu"} ${sender?.lastName ?: ""}"
-
     }
     private fun loadMessages(){
         val sortedMessages = conversation.messages.sortedBy { it.sentAt }
