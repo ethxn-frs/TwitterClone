@@ -1,9 +1,7 @@
 package com.etang.twitterclone.pages.conversations
 
-import ConversationsAdapter
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -16,17 +14,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.etang.twitterclone.R
-import com.etang.twitterclone.network.dto.auth_dto.LoginResponseDto
+import com.etang.twitterclone.adapter.ConversationsAdapter
 import com.etang.twitterclone.pages.ProfileActivity
-import com.etang.twitterclone.pages.conversations.ConversationsDetailsActivity
-import com.etang.twitterclone.pages.conversations.CreateConversationActivity
 import com.etang.twitterclone.pages.post.TimelineActivity
 import com.etang.twitterclone.session.SessionManager
 import com.etang.twitterclone.viewmodel.ConversationViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
-class ConversationsActivity : AppCompatActivity(){
+class ConversationsActivity : AppCompatActivity() {
     private val viewModel: ConversationViewModel by viewModels()
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ConversationsAdapter
@@ -50,9 +46,7 @@ class ConversationsActivity : AppCompatActivity(){
         emptyView = findViewById(R.id.emptyView)
         recyclerView = findViewById(R.id.recyclerViewConversations)
         adapter = ConversationsAdapter(
-            context = this,
-            sessionManager = sessionManager,
-            onConversationClicked = {conversation ->
+            onConversationClicked = { conversation ->
                 Toast.makeText(
                     this,
                     "Ouverture de la conversation avec ${conversation.name}",
@@ -68,22 +62,24 @@ class ConversationsActivity : AppCompatActivity(){
         recyclerView.adapter = adapter
 
         val fabNewConversation = findViewById<FloatingActionButton>(R.id.fabNewConversations)
-        fabNewConversation.setOnClickListener{
+        fabNewConversation.setOnClickListener {
             val intent = Intent(this, CreateConversationActivity::class.java)
             startActivity(intent)
         }
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
-            when(item.itemId){
+            when (item.itemId) {
                 R.id.navigation_home -> {
                     val intent = Intent(this, TimelineActivity::class.java)
                     startActivity(intent)
                     true
                 }
+
                 R.id.navigation_messages -> {
                     true
                 }
+
                 else -> false
             }
         }
@@ -95,7 +91,7 @@ class ConversationsActivity : AppCompatActivity(){
         observeViewModel()
         viewModel.fetchUserConversations(userId)
 
-        ivSettings.setOnClickListener{
+        ivSettings.setOnClickListener {
             val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
         }
@@ -106,11 +102,11 @@ class ConversationsActivity : AppCompatActivity(){
         overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
     }
 
-    private fun observeViewModel(){
-        viewModel.userConversations.observe(this){conversations ->
-            if(conversations.isEmpty()){
+    private fun observeViewModel() {
+        viewModel.userConversations.observe(this) { conversations ->
+            if (conversations.isEmpty()) {
                 emptyView.visibility = View.VISIBLE
-            }else{
+            } else {
                 emptyView.visibility = View.GONE
             }
             adapter.submitList(conversations)
