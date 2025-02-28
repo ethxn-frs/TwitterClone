@@ -1,39 +1,33 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:gravity="center"
-    android:padding="16dp"
-    android:background="#F5F5F5">
+    android:orientation="vertical"
+    android:padding="24dp">
 
     <TextView
-        android:id="@+id/welcomeMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Bienvenue dans l'application"
-        android:textSize="24sp"
-        android:textColor="@android:color/black"
         android:layout_marginBottom="32dp"
-        android:gravity="center" />
+        android:text="Bienvenue sur Twitter Clone"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/loginButton"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Se connecter"
         android:layout_marginBottom="16dp"
-        android:padding="12dp"
-        android:backgroundTint="@color/purple_500"
-        android:textColor="@android:color/white" />
+        android:text="Se connecter"
+        android:textSize="16sp" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/registerButton"
+        style="@style/Widget.MaterialComponents.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="S'inscrire"
-        android:padding="12dp"
-        android:backgroundTint="@color/purple_200"
-        android:textColor="@android:color/white" />
+        android:text="Créer un compte"
+        android:textSize="16sp" />
 </LinearLayout>

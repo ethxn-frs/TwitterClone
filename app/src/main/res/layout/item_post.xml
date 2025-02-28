@@ -1,150 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="7dp">
+    android:background="@android:color/white"
+    android:padding="10dp">
 
-    <!-- Détails du tweet -->
-    <LinearLayout
+    <!-- Image de profil -->
+    <ImageView
+        android:id="@+id/ivProfileImage"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/circle_background"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginEnd="10dp"
+        app:srcCompat="@drawable/ic_profile" />
+
+    <!-- Nom et pseudo -->
+    <TextView
+        android:id="@+id/tvAuthor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nom Prénom"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/ivProfileImage"
+        app:layout_constraintTop_toTopOf="@id/ivProfileImage" />
+
+    <TextView
+        android:id="@+id/tvAuthorUsername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:text="\@username"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="14sp"
+        app:layout_constraintStart_toEndOf="@id/tvAuthor"
+        app:layout_constraintTop_toTopOf="@id/tvAuthor" />
+
+    <!-- Temps écoulé -->
+    <TextView
+        android:id="@+id/tvTimeAgo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:text="• 10m"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="14sp"
+        app:layout_constraintStart_toEndOf="@id/tvAuthorUsername"
+        app:layout_constraintTop_toTopOf="@id/tvAuthor" />
+
+    <!-- Bouton d'actions -->
+    <ImageButton
+        android:id="@+id/btnMoreActions"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/more_actions_button"
+        android:src="@drawable/ic_more_horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvAuthor" />
+
+    <!-- Contenu du post -->
+    <TextView
+        android:id="@+id/tvContent"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:text="Contenu du post ici..."
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tvAuthor"
+        app:layout_constraintTop_toBottomOf="@id/tvAuthor" />
 
-        <!-- Ligne avec l'auteur, le nom d'utilisateur, le temps et plus d'actions-->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+    <!-- Actions : Like, Commentaire, Partage -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="6dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tvAuthor"
+        app:layout_constraintTop_toBottomOf="@id/tvContent">
 
-            <!-- Nom de l'auteur -->
-            <TextView
-                android:id="@+id/tvAuthor"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                android:text="@string/post_author_name"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+        <ImageButton
+            android:id="@+id/btnComment"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/comment_button"
+            android:src="@drawable/ic_comment24px" />
 
-            <!-- Nom d'utilisateur -->
-            <TextView
-                android:id="@+id/tvAuthorUsername"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                android:text="@string/post_author_username"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="14sp" />
-
-            <!-- Temps écoulé -->
-            <TextView
-                android:id="@+id/tvTimeAgo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/post_time_ago"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="14sp" />
-
-            <!-- Espace flexible pour pousser le bouton à la fin -->
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <!-- Bouton pour plus d'actions -->
-            <ImageButton
-                android:id="@+id/btnMoreActions"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/more_actions_button"
-                android:src="@drawable/ic_more_horizontal" />
-        </LinearLayout>
-
-        <!-- Contenu du post -->
         <TextView
-            android:id="@+id/tvContent"
+            android:id="@+id/tvComments"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="8dp"
-            android:text="@string/post_content"
-            android:textSize="15sp" />
+            android:layout_marginStart="4dp"
+            android:text="12"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="14sp" />
 
-        <!-- Actions (Like, Commentaire, Partage) -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <ImageButton
+            android:id="@+id/btnLike"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/like_button"
+            android:src="@drawable/ic_favorite_outlined24px" />
+
+        <TextView
+            android:id="@+id/tvLikes"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_marginStart="4dp"
+            android:text="120"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="14sp" />
 
-            <!-- Bouton pour liker -->
-            <ImageButton
-                android:id="@+id/btnLike"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/like_button"
-                android:src="@drawable/ic_favorite_outlined24px" />
-
-            <!-- Nombre de likes -->
-            <TextView
-                android:id="@+id/tvLikes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="16dp"
-                android:text="@string/post_likes_count"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="14sp" />
-
-            <!-- Bouton pour commenter -->
-            <ImageButton
-                android:id="@+id/btnComment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/comment_button"
-                android:src="@drawable/ic_comment24px" />
-
-            <!-- Nombre de commentaire -->
-            <TextView
-                android:id="@+id/tvComments"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="16dp"
-                android:text="@string/post_comments_count"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="14sp" />
-
-            <!-- Espace flexible pour pousser le bouton à la fin -->
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <!-- Bouton pour partager -->
-            <ImageButton
-                android:id="@+id/btnShare"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/share_button"
-                android:paddingBottom="3dp"
-                android:src="@drawable/ic_share_24px" />
-        </LinearLayout>
-
-        <!-- Ligne de séparation -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_marginTop="8dp"
-            android:background="@android:color/black" />
-
+        <ImageButton
+            android:id="@+id/btnShare"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="16dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/share_button"
+            android:src="@drawable/ic_share_24px" />
     </LinearLayout>
-</LinearLayout>
+
+    <!-- Ligne de séparation -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="6dp"
+        android:background="@android:color/darker_gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnShare" />
+</androidx.constraintlayout.widget.ConstraintLayout>

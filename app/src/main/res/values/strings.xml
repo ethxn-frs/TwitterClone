@@ -29,4 +29,5 @@
     <string name="post_created_hour">18:55</string>
     <string name="post_created_date">17/12/2024</string>
     <string name="centerd_dott">·</string>
+    <string name="create_post">Create post</string>
 </resources>

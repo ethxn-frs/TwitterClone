@@ -37,6 +37,12 @@ class SessionManager(context: Context) {
 
     }
 
+    fun logout() {
+        val editor = sharedPreferences.edit()
+        editor.clear() // Supprime toutes les données stockées
+        editor.apply()
+    }
+
     fun clearSession() {
         editor.clear()
         editor.apply()

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <application
         android:allowBackup="true"
@@ -9,8 +10,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TwitterClone">
-
-        <activity android:name=".pages.RegisterActivity" />
 
         <activity
             android:name=".pages.WelcomeActivity"
@@ -24,10 +23,8 @@
         <activity android:name=".pages.MessagesActivity" />
         <activity android:name=".pages.ConversationsActivity" />
 
-        <activity android:name=".pages.LoginActivity" />
+        <activity android:name=".pages.AuthActivity" />
         <activity android:name=".pages.HomeActivity" />
-        <activity android:name=".pages.post.TimelineActivity" />
-        <activity android:name=".pages.ProfileActivity" />
         <activity android:name=".pages.post.PostDetailsActivity" />
 
         <activity
@@ -35,8 +32,9 @@
             android:exported="true" />
 
     </application>
-
-
-    <uses-permission android:name="android.permission.INTERNET" />
+    
+    <uses-permission
+        android:name="android.permission.INTERNET"
+        tools:ignore="ManifestOrder" />
 
 </manifest>

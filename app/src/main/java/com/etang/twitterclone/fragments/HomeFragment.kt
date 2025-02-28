@@ -120,18 +120,20 @@ class HomeFragment : Fragment() {
     private fun updateSwipeRefreshMargin(showTopBar: Boolean) {
         val swipeRefreshLayout =
             view?.findViewById<SwipeRefreshLayout>(R.id.swipeRefreshLayout) ?: return
-        val newMarginTop = if (showTopBar) 100 else 0
-
         val layoutParams = swipeRefreshLayout.layoutParams as ViewGroup.MarginLayoutParams
 
-        ValueAnimator.ofInt(layoutParams.topMargin, newMarginTop).apply {
-            duration = 200
-            addUpdateListener { animation ->
-                layoutParams.topMargin = animation.animatedValue as Int
-                swipeRefreshLayout.layoutParams = layoutParams
+        val newMarginTop =
+            if (showTopBar) requireActivity().findViewById<View>(R.id.topBar).height else 0
+
+        if (layoutParams.topMargin != newMarginTop) {
+            ValueAnimator.ofInt(layoutParams.topMargin, newMarginTop).apply {
+                duration = 200
+                addUpdateListener { animation ->
+                    layoutParams.topMargin = animation.animatedValue as Int
+                    swipeRefreshLayout.layoutParams = layoutParams
+                }
+                start()
             }
-            start()
         }
     }
-
 }

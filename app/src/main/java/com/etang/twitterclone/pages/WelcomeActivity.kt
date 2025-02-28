@@ -14,34 +14,26 @@ class WelcomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_welcome)
 
+        sessionManager = SessionManager(this)
+
+        // Si l'utilisateur est déjà connecté, on le redirige vers MainActivity
+        if (sessionManager.isLoggedIn()) {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+            return
+        }
+
         val loginButton = findViewById<Button>(R.id.loginButton)
         val registerButton = findViewById<Button>(R.id.registerButton)
 
-        sessionManager = SessionManager(this)
-
-        if (sessionManager.isLoggedIn()) {
-            // L'utilisateur est déjà connecté, redirection vers HomeActivity
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-        /*else {
-            // L'utilisateur doit se connecter
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
-        }*/
-
-        // Redirige vers la page de connexion
         loginButton.setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, AuthActivity::class.java))
         }
 
-        // Redirige vers la page d'inscription
         registerButton.setOnClickListener {
-            val intent = Intent(this, RegisterActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, AuthActivity::class.java).apply {
+                putExtra("SHOW_REGISTER", true)
+            })
         }
     }
 }

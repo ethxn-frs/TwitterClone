@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
@@ -16,6 +17,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.etang.twitterclone.R
 import com.etang.twitterclone.data.model.Post
 import com.etang.twitterclone.fragments.PostDetailsFragment
@@ -70,6 +72,7 @@ class PostsAdapter(
         private val btnLike: ImageButton = itemView.findViewById(R.id.btnLike)
         private val btnComment: ImageButton = itemView.findViewById(R.id.btnComment)
         private val btnShare: ImageButton = itemView.findViewById(R.id.btnShare)
+        private val ivivProfileImage: ImageView = itemView.findViewById(R.id.ivProfileImage)
 
 
         @SuppressLint("SetTextI18n")
@@ -89,6 +92,12 @@ class PostsAdapter(
 
             val isLiked = post.userHaveLiked.any { it.id == currentUserId }
             updateLikeButtonIcon(isLiked)
+
+            Glide.with(itemView.context)
+                .load("https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                )
+                .circleCrop()
+                .into(ivivProfileImage)
 
             btnMoreActions.setOnClickListener { view ->
                 val popupMenu = PopupMenu(itemView.context, view)

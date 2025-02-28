@@ -1,4 +1,4 @@
-package com.etang.twitterclone.pages
+package com.etang.twitterclone.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.etang.twitterclone.R
 import com.etang.twitterclone.network.dto.auth_dto.RegisterDto
+import com.etang.twitterclone.pages.AuthActivity
 import com.etang.twitterclone.viewmodel.RegisterViewModel
 import java.text.SimpleDateFormat
 
@@ -45,7 +46,7 @@ class RegisterFragment : Fragment() {
                 email = emailInput.text.toString(),
                 password = passwordInput.text.toString(),
                 birthDate = SimpleDateFormat("dd/MM/yyyy").parse("01/01/2000"),
-                phoneNumber = phoneInput.text.toString(),
+                phoneNumber = phoneInput.text.toString()
             )
 
             registerViewModel.registerUser(registerDto)

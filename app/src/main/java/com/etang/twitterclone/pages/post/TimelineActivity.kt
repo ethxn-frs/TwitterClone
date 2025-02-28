@@ -14,9 +14,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.etang.twitterclone.R
 import com.etang.twitterclone.adapter.PostsAdapter
 import com.etang.twitterclone.data.model.Post
+import com.etang.twitterclone.fragments.ProfileFragment
 import com.etang.twitterclone.network.dto.auth_dto.LoginResponseDto
 import com.etang.twitterclone.pages.ConversationsActivity
-import com.etang.twitterclone.pages.ProfileActivity
 import com.etang.twitterclone.session.SessionManager
 import com.etang.twitterclone.viewmodel.PostViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -113,7 +113,7 @@ class TimelineActivity : AppCompatActivity() {
 
 
         ivSettings.setOnClickListener {
-            val intent = Intent(this, ProfileActivity::class.java)
+            val intent = Intent(this, ProfileFragment::class.java)
             startActivity(intent)
         }
     }

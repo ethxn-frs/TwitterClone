@@ -1,5 +1,6 @@
 package com.etang.twitterclone.pages
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -120,7 +121,7 @@ class MainActivity : AppCompatActivity() {
         drawerLayout.closeDrawer(GravityCompat.START)
     }
 
-    public fun updateTopBar(
+    fun updateTopBar(
         title: String,
         profilePictureUrl: String,
         actionIcon: Int,
@@ -193,33 +194,30 @@ class MainActivity : AppCompatActivity() {
         tvNavUsername.setOnClickListener(navigateToProfile)
     }
 
-
     private fun handleMenuClick(menuItem: MenuItem) {
         when (menuItem.itemId) {
             R.id.menu_home -> loadFragment(HomeFragment())
             R.id.menu_search -> loadFragment(SearchFragment())
-            R.id.menu_notifications -> {
-                // À implémenter plus tard
+            R.id.menu_notifications -> { /* À implémenter plus tard */
             }
 
-            R.id.menu_messages -> {
-                // À implémenter plus tard
+            R.id.menu_messages -> { /* À implémenter plus tard */
             }
 
-            R.id.menu_bookmarks -> {
-                // À implémenter plus tard
+            R.id.menu_bookmarks -> { /* À implémenter plus tard */
             }
 
             R.id.menu_profile -> loadFragment(ProfileFragment())
-            R.id.menu_settings -> {
-                loadFragment(SettingsFragment())
-            }
+            R.id.menu_settings -> loadFragment(SettingsFragment())
 
             R.id.menu_logout -> {
-                // Gérer la déconnexion (SessionManager)
-                //sessionManager.logout()
+                sessionManager.logout()
+                val intent = Intent(this, WelcomeActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
                 finish()
             }
         }
     }
+
 }

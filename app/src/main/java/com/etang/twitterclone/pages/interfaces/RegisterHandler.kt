@@ -1,5 +1,6 @@
 package com.etang.twitterclone.pages.interfaces
 
 interface RegisterHandler {
-    fun displayRegisterPage()
+    fun switchToRegister()
+    fun switchToLogin()
 }
