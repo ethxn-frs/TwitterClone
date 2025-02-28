@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -31,6 +32,7 @@ class ConversationsActivity : AppCompatActivity(){
     private lateinit var adapter: ConversationsAdapter
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var sessionManager: SessionManager
+    private lateinit var emptyView: TextView
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,21 +47,10 @@ class ConversationsActivity : AppCompatActivity(){
         tvTitle.text = "Conversations"
         val ivSettings = headerLayout.findViewById<ImageView>(R.id.ivSettings)
 
-        val userResponse: LoginResponseDto? =
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                intent.getSerializableExtra("USER_DATA", LoginResponseDto::class.java)
-            }else{
-                @Suppress("DEPRECATION")
-                intent.getSerializableExtra("USER_DATA") as? LoginResponseDto
-            }
-        userResponse?.let {
-            Toast.makeText(this, "Bienvenue${it.user.username} !", Toast.LENGTH_SHORT).show()
-        }
-
+        emptyView = findViewById(R.id.emptyView)
         recyclerView = findViewById(R.id.recyclerViewConversations)
         adapter = ConversationsAdapter(
             context = this,
-            conversations = emptyList(),
             sessionManager = sessionManager,
             onConversationClicked = {conversation ->
                 Toast.makeText(
@@ -72,6 +63,7 @@ class ConversationsActivity : AppCompatActivity(){
                 startActivity(intent)
             }
         )
+
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
@@ -116,7 +108,12 @@ class ConversationsActivity : AppCompatActivity(){
 
     private fun observeViewModel(){
         viewModel.userConversations.observe(this){conversations ->
-            adapter.updateData(conversations)
+            if(conversations.isEmpty()){
+                emptyView.visibility = View.VISIBLE
+            }else{
+                emptyView.visibility = View.GONE
+            }
+            adapter.submitList(conversations)
             swipeRefreshLayout.isRefreshing = false
         }
     }

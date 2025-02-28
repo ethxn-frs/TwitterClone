@@ -27,58 +27,27 @@ import java.util.concurrent.TimeUnit
 class ConversationsAdapter(
     private val context: Context,
     private val sessionManager: SessionManager,
-    private var conversations: List<Conversation>,
     private val onConversationClicked: (Conversation) -> Unit
 ) : RecyclerView.Adapter<ConversationsAdapter.ConversationsViewHolder>(){
-
-    inner class ConversationsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
-        val profileImageView : ImageView = itemView.findViewById(R.id.profileImageView)
-        val userNameTextView: TextView = itemView.findViewById(R.id.usernameTextView)
-        val handleTextView: TextView = itemView.findViewById(R.id.handleTextView)
-        val lastMessageTextView: TextView = itemView.findViewById(R.id.lastMessageTextView)
-        val timeStampTextView : TextView = itemView.findViewById(R.id.timestampTextView)
-    }
+    private val conversations = mutableListOf<Conversation>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ConversationsViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_conversations, parent, false)
+        view.isClickable = true
         return ConversationsViewHolder(view)
     }
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ConversationsViewHolder, position: Int) {
-        val conversation = conversations[position]
-        Glide.with(context)
-            .load(conversation.name ?: "")
-            .placeholder(R.drawable.ic_profile)
-            .error(R.drawable.ic_profile)
-            .into(holder.profileImageView)
-
-        holder.userNameTextView.text = conversation.name
-        holder.handleTextView.text = if(conversation.users.isNotEmpty()) "@${conversation.users[0].username}" else ""
-
-        holder.lastMessageTextView.text = if (conversation.messages.isNotEmpty()){
-            conversation.messages.last().content
-        }else{
-            "Aucun message"
-        }
-
-        holder.timeStampTextView.text = formatTimeAgo(conversation.createdAt)
-
-        holder.itemView.setOnClickListener{
-            onConversationClicked(conversation)
-        }
-
-
+        holder.bind(conversations[position])
     }
 
     override fun getItemCount(): Int = conversations.size
 
-    fun updateData(newConversation: List<Conversation>){
-        conversations = newConversation
-        notifyDataSetChanged()
-    }
+    @SuppressLint("NotifyDataSetChanged")
     fun submitList(newList: List<Conversation>) {
-        conversations = newList
+        conversations.clear()
+        conversations.addAll(newList)
         notifyDataSetChanged()
     }
 
@@ -107,6 +76,31 @@ class ConversationsAdapter(
             }
         } catch (e: Exception) {
             "unknown"
+        }
+    }
+
+    inner class ConversationsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+        val profileImageView : ImageView = itemView.findViewById(R.id.profileImageView)
+        val userNameTextView: TextView = itemView.findViewById(R.id.usernameTextView)
+        val handleTextView: TextView = itemView.findViewById(R.id.handleTextView)
+        val lastMessageTextView: TextView = itemView.findViewById(R.id.lastMessageTextView)
+        val timeStampTextView : TextView = itemView.findViewById(R.id.timestampTextView)
+
+        @SuppressLint("SetTextI18n")
+        fun bind(conversation: Conversation){
+            userNameTextView.text = conversation.name
+            handleTextView.text = if(conversation.users.isNotEmpty()) "@${conversation.users[0].username}" else ""
+            lastMessageTextView.text = if (conversation.messages.isNotEmpty()){
+                conversation.messages.last().content
+            }else{
+                "Aucun message"
+            }
+
+            timeStampTextView.text = formatTimeAgo(conversation.createdAt)
+            itemView.setOnClickListener{
+                onConversationClicked(conversation)
+            }
+
         }
     }
 
