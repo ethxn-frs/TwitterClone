@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.etang.twitterclone.R
 import com.etang.twitterclone.data.model.Conversation
+import com.etang.twitterclone.session.SessionManager
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -17,7 +18,8 @@ import java.util.TimeZone
 import java.util.concurrent.TimeUnit
 
 class ConversationsAdapter(
-    private val onConversationClicked: (Conversation) -> Unit
+    private val onConversationClicked: (Conversation) -> Unit,
+    private val sessionManager: SessionManager
 ) : RecyclerView.Adapter<ConversationsAdapter.ConversationsViewHolder>() {
 
     private val conversations = mutableListOf<Conversation>()
@@ -48,7 +50,16 @@ class ConversationsAdapter(
         private val timestampTextView: TextView = itemView.findViewById(R.id.timestampTextView)
 
         fun bind(conversation: Conversation) {
-            userNameTextView.text = conversation.name
+            val currentUserId = sessionManager.getUserId()
+
+            val participants = conversation.users.filter { it.id != currentUserId }
+
+            val conversationName = when (participants.size){
+                1 -> participants.firstOrNull()?.username
+                else -> participants.joinToString(", ") {it.username}
+
+            }
+            userNameTextView.text = conversationName
 
             // Charger la dernière conversation
             lastMessageTextView.text = if (conversation.messages.isNotEmpty()) {
@@ -88,6 +99,16 @@ class ConversationsAdapter(
             }
         } catch (e: Exception) {
             "inconnu"
+        }
+    }
+
+    fun updateConversation(conversation: Conversation?) {
+        val index = conversations.indexOfFirst { it.id == conversation?.id  }
+        if(index != -1){
+            if (conversation != null) {
+                conversations[index] = conversation
+            }
+            notifyItemChanged(index)
         }
     }
 }

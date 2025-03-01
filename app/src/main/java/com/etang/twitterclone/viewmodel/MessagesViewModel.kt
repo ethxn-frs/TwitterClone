@@ -29,7 +29,8 @@ class MessagesViewModel() : ViewModel() {
     fun sendMessage(conversationId: Int, userId: Int, content: String) {
         viewModelScope.launch {
             try {
-                repository.sendMessage(conversationId, userId, content).await()
+                val sentMessage = repository.sendMessage(conversationId, userId, content).await()
+                markMessageAsSeen(sentMessage.id, userId)
                 loadMessagesInConversation(conversationId)
             } catch (e: Exception) {
 

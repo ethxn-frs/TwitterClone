@@ -8,9 +8,10 @@ import com.etang.twitterclone.data.model.Conversation
 import com.etang.twitterclone.data.model.User
 import com.etang.twitterclone.repositories.ConversationRepository
 import com.etang.twitterclone.repositories.UserRepository
+import com.etang.twitterclone.session.SessionManager
 import kotlinx.coroutines.launch
 
-class ConversationViewModel() : ViewModel() {
+class ConversationViewModel(private val sessionManager: SessionManager) : ViewModel() {
 
     private val conversationRepository = ConversationRepository()
     private val userRepository = UserRepository()
@@ -32,6 +33,9 @@ class ConversationViewModel() : ViewModel() {
 
     private val _creationSuccess = MutableLiveData<Boolean>()
     val creationSuccess: LiveData<Boolean> get() = _creationSuccess
+
+    private val _createdConversationId = MutableLiveData<Int?>()
+    val createdConversationId: LiveData<Int?> get() = _createdConversationId
 
     fun fetchUserConversations(userId: Int) {
         viewModelScope.launch {
@@ -90,13 +94,91 @@ class ConversationViewModel() : ViewModel() {
                 participantIds.add(user.id)
             }
             if(participantIds.isNotEmpty()){
-                conversationRepository.createConversation(creatorId, participantIds)
+                val conversation = conversationRepository.createConversation(creatorId, participantIds)
+                _createdConversationId.postValue(conversation.id)
                 _creationSuccess.value = true
             }else{
                 _error.value = "Aucun participant valide"
             }
 
 
+        }
+    }
+
+    suspend fun checkIfConversationExists(usernames: List<String>, sessionManager: SessionManager): Boolean {
+        try {
+            val convs = conversationRepository.getUserConversations(sessionManager.getUserId())
+            val currentUserName = sessionManager.getUser()?.username.orEmpty()
+            val newUsers = (usernames + currentUserName).toSet()
+            for(conv in convs){
+                val conversationWithUsers = conversationRepository.getConversationById(conv.id)
+                val convUsers = conversationWithUsers.users.map { it.username }.toSet()
+
+                if (convUsers == newUsers){
+                    return true
+                }
+            }
+        } catch (e: Exception){
+            _error.postValue("Erreur lors de la verification de la conversation : ${e.message}")
+        }
+        return false
+    }
+
+    fun addUserToConversation(conversationId: Int, userId: Int, username: String) {
+        viewModelScope.launch {
+            try {
+                val conversation = conversationRepository.getConversationById(conversationId)
+                val currentParticipantsName = conversation.users.map { it.username }
+                val currentParticipantsId = conversation.users.map {it.id}
+
+                if(currentParticipantsId.contains(userId)){
+                    _error.postValue("L'utilisateur est deja present dans la conversation")
+                    return@launch
+                }
+                for (participantId in currentParticipantsId){
+                    val userFollows = userRepository.isFollowingUser(userId, participantId)
+                    val participantFollowsUser = userRepository.isFollowingUser(participantId, userId)
+
+                    if(!userFollows || !participantFollowsUser){
+                        _error.postValue("L'utilisateur et les participants doivent être abonnés l'un et l'autre")
+                        return@launch
+                    }
+
+                }
+                val check = checkIfConversationsExistsWhenAddingUser(currentParticipantsName, username)
+                if(check){
+                    _error.postValue("Une conversation identique existe deja vous ne pouvez pas l'ajouter")
+                    return@launch
+                }
+                conversationRepository.addUserFromConversation(conversationId, userId)
+                fetchConversationById(conversationId, sessionManager.getUserId())
+            } catch (e: Exception) {
+                _error.postValue("Erreur lors de l'ajout : ${e.message}")
+            }
+        }
+    }
+
+    suspend fun checkIfConversationsExistsWhenAddingUser(currentParticipantsName: List<String>, username: String): Boolean{
+        val convs = conversationRepository.getUserConversations(sessionManager.getUserId())
+        val newUsers = (currentParticipantsName + username).toSet()
+        for(conv in convs){
+            val conversationWithUsers = conversationRepository.getConversationById(conv.id)
+            val convUsers = conversationWithUsers.users.map { it.username }.toSet()
+
+            if (convUsers == newUsers){
+                return true
+            }
+        }
+        return false
+    }
+    fun removeUserFromConversation(conversationId: Int, userId: Int) {
+        viewModelScope.launch {
+            try {
+                conversationRepository.removeUserFromConversation(conversationId, userId)
+                fetchConversationById(conversationId, sessionManager.getUserId())
+            } catch (e: Exception) {
+                _error.postValue("Erreur lors de la suppression : ${e.message}")
+            }
         }
     }
 

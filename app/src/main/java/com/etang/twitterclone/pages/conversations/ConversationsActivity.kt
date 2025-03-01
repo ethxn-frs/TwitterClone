@@ -23,7 +23,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class ConversationsActivity : AppCompatActivity() {
-    private val viewModel: ConversationViewModel by viewModels()
+    private val viewModel: ConversationViewModel by viewModels {
+        ConversationViewModelFactory(SessionManager(this))
+    }
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ConversationsAdapter
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
@@ -46,6 +48,7 @@ class ConversationsActivity : AppCompatActivity() {
         emptyView = findViewById(R.id.emptyView)
         recyclerView = findViewById(R.id.recyclerViewConversations)
         adapter = ConversationsAdapter(
+            sessionManager = sessionManager,
             onConversationClicked = { conversation ->
                 Toast.makeText(
                     this,
@@ -54,7 +57,7 @@ class ConversationsActivity : AppCompatActivity() {
                 ).show()
                 val intent = Intent(this, ConversationsDetailsActivity::class.java)
                 intent.putExtra("CONVERSATION_ID", conversation.id)
-                startActivity(intent)
+                startActivityForResult(intent, 1)
             }
         )
 
@@ -90,10 +93,22 @@ class ConversationsActivity : AppCompatActivity() {
 
         observeViewModel()
         viewModel.fetchUserConversations(userId)
-
+        viewModel.userConversations.observe(this) {convs ->
+            convs.forEach { conv ->
+                viewModel.fetchConversationById(conv.id, sessionManager.getUserId())
+            }
+        }
         ivSettings.setOnClickListener {
             val intent = Intent(this, ProfileActivity::class.java)
             startActivity(intent)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == 1 && resultCode == RESULT_OK){
+            val userId = sessionManager.getUserId()
+            viewModel.fetchUserConversations(userId)
         }
     }
 
@@ -109,8 +124,17 @@ class ConversationsActivity : AppCompatActivity() {
             } else {
                 emptyView.visibility = View.GONE
             }
+            conversations.forEach { conversation ->
+                viewModel.fetchConversationById(conversation.id, sessionManager.getUserId())
+            }
             adapter.submitList(conversations)
             swipeRefreshLayout.isRefreshing = false
+        }
+
+        viewModel.conversationDetails.observe(this) { updatedConv ->
+            updatedConv.let { conversation ->
+                adapter.updateConversation(conversation)
+            }
         }
     }
 }

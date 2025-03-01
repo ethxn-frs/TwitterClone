@@ -4,15 +4,33 @@
     android:layout_height="wrap_content"
     android:padding="8dp"
     android:gravity="start"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_marginBottom="6dp">
+
+    <TextView
+        android:id="@+id/tvMessageInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="12sp"
+        android:textColor="@android:color/darker_gray"
+        android:layout_marginBottom="4dp"/>
 
     <TextView
         android:id="@+id/messageContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/gray_light"
+        android:background="@color/white"
         android:padding="8dp"
         android:textColor="@android:color/white"/>
+
+    <TextView
+        android:id="@+id/tvSeenStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="12sp"
+        android:layout_marginTop="2dp"/>
 
     <ImageView
         android:id="@+id/btnReaction"
@@ -25,5 +43,7 @@
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:layout_marginTop="4dp"/>
+
+
 
 </LinearLayout>

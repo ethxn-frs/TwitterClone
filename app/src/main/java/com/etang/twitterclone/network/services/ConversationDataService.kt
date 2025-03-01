@@ -24,6 +24,12 @@ interface ConversationDataService {
         @Body request: UserConversationRequest
     ): Response<Unit>
 
+    @POST("/conversations/{conversationId}/add-user")
+    suspend fun addUserFromConversation(
+        @Path("conversationId") conversationId: Int,
+        @Body request: UserConversationRequest
+    ): Response<Unit>
+
     @GET("/conversations/{id}")
     suspend fun getConversationById(
         @Path("id") conversationId: Int

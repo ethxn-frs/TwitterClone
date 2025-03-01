@@ -1,6 +1,7 @@
 package com.etang.twitterclone.pages.conversations
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -28,7 +29,6 @@ class CreateConversationActivity : AppCompatActivity() {
 
     private val conversationViewModel: ConversationViewModel by viewModels()
     private val userViewModel: UserViewModel by viewModels()
-    private val userRepository = UserRepository()
 
     private lateinit var sessionManager: SessionManager
 
@@ -60,7 +60,15 @@ class CreateConversationActivity : AppCompatActivity() {
             val participantsText = allParticipants.text.toString().trim()
             if(participantsText.isNotEmpty()){
                 val usernames = participantsText.split(",", "(il vous suit)").map {it.trim()}.filter { it.isNotEmpty() }
-                conversationViewModel.createConversation(creatorId, usernames)
+
+                lifecycleScope.launch {
+                    val conversationsExists = conversationViewModel.checkIfConversationExists(usernames, sessionManager)
+                    if(conversationsExists){
+                        Toast.makeText(this@CreateConversationActivity, "La conversation existe deja", Toast.LENGTH_SHORT).show()
+                    }else{
+                        conversationViewModel.createConversation(creatorId, usernames)
+                    }
+                }
             }else{
                 Toast.makeText(this, "Veuillez saisir au moins un username", Toast.LENGTH_SHORT).show()
             }
@@ -142,6 +150,17 @@ class CreateConversationActivity : AppCompatActivity() {
         conversationViewModel.creationSuccess.observe(this) { success ->
             if(success){
                 Toast.makeText(this, "Creation en cours", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+        }
+
+        conversationViewModel.createdConversationId.observe(this){conversationId ->
+            if(conversationId != null){
+                Toast.makeText(this, "Conversation créee", Toast.LENGTH_SHORT).show()
+
+                val intent = Intent(this, ConversationsDetailsActivity:: class.java)
+                intent.putExtra("CONVERSATION_ID", conversationId)
+                startActivity(intent)
                 finish()
             }
         }

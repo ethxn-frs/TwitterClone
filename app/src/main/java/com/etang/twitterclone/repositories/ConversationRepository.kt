@@ -32,20 +32,28 @@ class ConversationRepository() {
         }
     }
 
-    suspend fun removeUserFromConversation(conversationId: Int, userId: Int) {
-        val request = UserConversationRequest(userId)
-        val response = service.removeUserFromConversation(conversationId, request)
-        if (!response.isSuccessful) {
-            throw Exception("Failed to remove user from conversation")
-        }
-    }
-
     suspend fun getConversationById(conversationId: Int): Conversation{
         val response = service.getConversationById(conversationId)
         if(response.isSuccessful){
             return response.body()!!
         }else{
             throw Exception("Failed to fetch conversation details")
+        }
+    }
+
+    suspend fun addUserFromConversation(conversationId: Int, userId: Int){
+        val request = UserConversationRequest(userId)
+        val response = service.addUserFromConversation(conversationId, request)
+        if(!response.isSuccessful){
+            throw Exception("Echec de l'ajout de l'utilisateur")
+        }
+    }
+
+    suspend fun removeUserFromConversation(conversationId: Int, userId: Int){
+        val request = UserConversationRequest(userId)
+        val response = service.removeUserFromConversation(conversationId, request)
+        if(!response.isSuccessful){
+            throw Exception("Echec de la suppression de l'utilisateur")
         }
     }
 }

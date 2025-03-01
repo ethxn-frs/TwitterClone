@@ -10,6 +10,9 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.etang.twitterclone.R
 import com.etang.twitterclone.data.model.Message
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
 
 class MessagesAdapter(
     private val currentUserId: Int,
@@ -31,6 +34,8 @@ class MessagesAdapter(
         val messageContentTextView: TextView = itemView.findViewById(R.id.messageContent)
         val btnReaction: ImageView = itemView.findViewById(R.id.btnReaction)
         val tvReaction: TextView = itemView.findViewById(R.id.tvReaction)
+        val tvMessageInfo: TextView = itemView.findViewById(R.id.tvMessageInfo)
+        val tvSeenStatus: TextView = itemView.findViewById(R.id.tvSeenStatus)
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -59,6 +64,10 @@ class MessagesAdapter(
                 "${it.firstName} ${it.lastName}"
             } ?: "Inconnu"
         }
+        val formattedDate = formatDateTime(message.sentAt)
+        val authorName = message.author?.username ?: "Inconnu"
+
+        holder.tvMessageInfo?.text = "$authorName ($formattedDate)"
         holder.messageContentTextView.text = message.content
 
         holder.btnReaction.setOnClickListener { view ->
@@ -66,6 +75,16 @@ class MessagesAdapter(
         }
 
         holder.tvReaction.text = message.reaction ?: ""
+
+        val totalParticipants = messages.size
+        val otherParticipants = totalParticipants - 1
+        val seenByOthersThanCreator = message.seenBy.count {it.id != message.author.id }
+
+        holder.tvSeenStatus.text = when {
+            seenByOthersThanCreator == otherParticipants -> "Vu par tout le monde"
+            seenByOthersThanCreator > 0 -> "Vu par un utilisateur"
+            else -> ""
+        }
 
     }
 
@@ -96,5 +115,17 @@ class MessagesAdapter(
     fun submitList(newList: List<Message>){
         messages = newList
         notifyDataSetChanged()
+    }
+
+    private fun formatDateTime(dateString: String): String {
+        return try {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+            inputFormat.timeZone = TimeZone.getTimeZone("UTC")
+            val date = inputFormat.parse(dateString)
+            val outputFormat = SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault())
+            outputFormat.format(date)
+        } catch (e: Exception) {
+            "Inconnu"
+        }
     }
 }

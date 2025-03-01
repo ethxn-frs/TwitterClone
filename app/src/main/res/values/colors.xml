@@ -8,4 +8,5 @@
     <color name="purple_600">#512DA8</color>
     <color name="background_dark">#121212</color>
     <color name="gray_light">#9E9E9E</color>
+    <color name="message_sent_bg">#2196F3</color> <!-- Bleu -->
 </resources>
