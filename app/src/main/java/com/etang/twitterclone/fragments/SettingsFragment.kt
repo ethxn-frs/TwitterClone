@@ -28,7 +28,7 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        (activity as? MainActivity)?.updateTopBar("Paramètres", "", 0, isSettings = true)
+        (activity as? MainActivity)?.updateTopBar("Paramètres", 0, isSettings = true)
 
         val settingsList = listOf(
             SettingItem(R.drawable.ic_profile, "Votre compte"),

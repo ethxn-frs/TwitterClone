@@ -54,7 +54,19 @@ class PostDetailsFragment : Fragment() {
         commentsAdapter = PostsAdapter(
             sessionManager,
             onLikeClicked = { postId -> likeComment(postId) },
-            onShareClicked = { comment -> shareComment(comment) }
+            onShareClicked = { comment -> shareComment(comment) },
+            onProfileClicked = { userId ->
+                val fragment = ProfileFragment().apply {
+                    arguments = Bundle().apply {
+                        putInt("USER_ID", userId)
+                    }
+                }
+
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainer, fragment)
+                    .addToBackStack(null)
+                    .commit()
+            }
         )
         recyclerViewComments.layoutManager = LinearLayoutManager(requireContext())
         recyclerViewComments.adapter = commentsAdapter

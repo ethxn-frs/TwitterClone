@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.etang.twitterclone.R
 import com.etang.twitterclone.adapter.PostsAdapter
 import com.etang.twitterclone.databinding.FragmentUserLikesBinding
 import com.etang.twitterclone.repositories.UserRepository
@@ -36,7 +37,23 @@ class UserLikesFragment : Fragment() {
         sessionManager = SessionManager(requireContext())
         userId = arguments?.getInt("USER_ID") ?: sessionManager.getUserId()
 
-        adapter = PostsAdapter(sessionManager, {}, {})
+        adapter = PostsAdapter(
+            sessionManager = sessionManager,
+            onLikeClicked = {},
+            onShareClicked = {},
+            onProfileClicked = { userId ->
+                val fragment = ProfileFragment().apply {
+                    arguments = Bundle().apply {
+                        putInt("USER_ID", userId)
+                    }
+                }
+
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainer, fragment)
+                    .addToBackStack(null)
+                    .commit()
+            }
+        )
 
         binding.recyclerViewPosts.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewPosts.adapter = adapter
@@ -57,8 +74,8 @@ class UserLikesFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(userId: Int): UserPostsFragment {
-            val fragment = UserPostsFragment()
+        fun newInstance(userId: Int): UserLikesFragment {
+            val fragment = UserLikesFragment()
             val args = Bundle()
             args.putInt("USER_ID", userId)
             fragment.arguments = args

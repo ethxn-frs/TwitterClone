@@ -38,6 +38,18 @@ class SearchPostsFragment : Fragment() {
             sessionManager = SessionManager(requireContext()),
             onLikeClicked = { /* Like action */ },
             onShareClicked = { /* Share action */ },
+            onProfileClicked = { userId ->
+                val fragment = ProfileFragment().apply {
+                    arguments = Bundle().apply {
+                        putInt("USER_ID", userId)
+                    }
+                }
+
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainer, fragment)
+                    .addToBackStack(null)
+                    .commit()
+            }
         )
 
         recyclerView.adapter = adapter

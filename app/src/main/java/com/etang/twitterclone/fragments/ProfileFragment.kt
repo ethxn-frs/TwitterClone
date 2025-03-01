@@ -21,8 +21,9 @@ class ProfileFragment : Fragment() {
     private val binding get() = _binding!!
     private val userRepository = UserRepository()
     private lateinit var sessionManager: SessionManager
-    private var userId: Int = 0  // ID de l'utilisateur du profil affiché
-    private var currentUserId: Int = 0  // ID de l'utilisateur connecté
+    private var userId: Int = 0
+    private var currentUserId: Int = 0
+    private var isFollowing = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -36,8 +37,6 @@ class ProfileFragment : Fragment() {
 
         sessionManager = SessionManager(requireContext())
         currentUserId = sessionManager.getUserId()
-
-        // Récupérer l'ID du profil à afficher depuis les arguments
         userId = arguments?.getInt("USER_ID") ?: currentUserId
 
         fetchUserProfile(userId)
@@ -49,13 +48,23 @@ class ProfileFragment : Fragment() {
         TabLayoutMediator(binding.tabLayout, binding.viewPagerProfile) { tab, position ->
             tab.text = tabTitles[position]
         }.attach()
+
+        binding.btnFollow.setOnClickListener { handleFollowUnfollow() }
     }
 
     private fun fetchUserProfile(id: Int) {
         lifecycleScope.launch {
             val user = userRepository.getUserById(id)
             if (user != null) {
-                bindUserProfile(user)
+                bindUserProfile(UserProfileDto(user))
+
+                // Si on consulte notre propre profil, pas besoin de vérifier si on suit quelqu'un
+                if (user.id != currentUserId) {
+                    isFollowing = userRepository.isFollowing(currentUserId, userId)
+                    updateFollowButton()
+                } else {
+                    setupEditProfileButton()
+                }
             }
         }
     }
@@ -71,13 +80,49 @@ class ProfileFragment : Fragment() {
         binding.tvFollowersCount.text = user.followersCount.toString()
         binding.tvFollowingCount.text = user.followingCount.toString()
 
-        Glide.with(this).load(user.coverPictureUrl).into(binding.ivCover)
-        Glide.with(this).load(user.profilePictureUrl).into(binding.ivProfilePicture)
+        Glide.with(this).load(
+            user.coverPictureUrl
+                ?: "https://i.pinimg.com/736x/5a/a9/24/5aa92474e3a20a977dbdcf301d93b57d.jpg"
+        ).into(binding.ivCover)
+        Glide.with(this).load(
+            user.profilePictureUrl
+                ?: "https://img.lapresse.ca/435x290/201704/03/1378798-nouvelle-image-defaut-ressemble-davantage.jpg"
+        ).into(binding.ivProfilePicture)
+    }
 
-        if (user.id == currentUserId) {
-            binding.btnFollow.text = "Modifier Profil"
+    private fun setupEditProfileButton() {
+        binding.btnFollow.text = "Modifier Profil"
+        binding.btnFollow.setBackgroundColor(resources.getColor(android.R.color.holo_blue_light))
+        binding.btnFollow.setOnClickListener {
+            val bottomSheet = EditProfileBottomSheet {
+                fetchUserProfile(userId) // Réactualiser le profil après modification
+            }
+            bottomSheet.show(parentFragmentManager, "EditProfileBottomSheet")
+        }
+    }
+
+    private fun updateFollowButton() {
+        if (isFollowing) {
+            binding.btnFollow.text = "Se désabonner"
+            binding.btnFollow.setBackgroundColor(resources.getColor(android.R.color.darker_gray))
         } else {
             binding.btnFollow.text = "Suivre"
+            binding.btnFollow.setBackgroundColor(resources.getColor(android.R.color.holo_blue_light))
+        }
+    }
+
+    private fun handleFollowUnfollow() {
+        lifecycleScope.launch {
+            val success = if (isFollowing) {
+                userRepository.unfollowUser(currentUserId, userId)
+            } else {
+                userRepository.followUser(currentUserId, userId)
+            }
+
+            if (success) {
+                isFollowing = !isFollowing
+                updateFollowButton()
+            }
         }
     }
 

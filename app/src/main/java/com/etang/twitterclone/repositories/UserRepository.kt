@@ -6,6 +6,8 @@ import com.etang.twitterclone.data.model.User
 import com.etang.twitterclone.network.RetrofitClient
 import com.etang.twitterclone.network.dto.SearchRequestDto
 import com.etang.twitterclone.network.services.UserDataService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 class UserRepository {
@@ -84,5 +86,47 @@ class UserRepository {
         }
     }
 
+    suspend fun followUser(followerId: Int, followeeId: Int): Boolean {
+        return withContext(Dispatchers.IO) {
+            val response = userDataService.followUser(
+                mapOf(
+                    "followerId" to followerId,
+                    "followeeId" to followeeId
+                )
+            )
+            response.isSuccessful
+        }
+    }
 
+    suspend fun unfollowUser(followerId: Int, followeeId: Int): Boolean {
+        return withContext(Dispatchers.IO) {
+            val response = userDataService.unfollowUser(
+                mapOf(
+                    "followerId" to followerId,
+                    "followeeId" to followeeId
+                )
+            )
+            response.isSuccessful
+        }
+    }
+
+    suspend fun isFollowing(followerId: Int, followeeId: Int): Boolean {
+        return withContext(Dispatchers.IO) {
+            val response = userDataService.isFollowing(followerId, followeeId)
+            if (response.isSuccessful) {
+                response.body()?.isFollowing ?: false
+            } else {
+                false
+            }
+        }
+    }
+
+    suspend fun updateUserField(userId: Int, field: String, value: String): Boolean {
+        return try {
+            val response = userDataService.updateUserField(userId, mapOf(field to value))
+            response.isSuccessful
+        } catch (e: Exception) {
+            false
+        }
+    }
 }

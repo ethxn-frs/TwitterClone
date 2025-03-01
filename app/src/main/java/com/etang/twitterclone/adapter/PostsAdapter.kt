@@ -37,7 +37,8 @@ import java.util.concurrent.TimeUnit
 class PostsAdapter(
     private val sessionManager: SessionManager,
     private val onLikeClicked: (postId: Int) -> Unit,
-    private val onShareClicked: (post: Post) -> Unit
+    private val onShareClicked: (post: Post) -> Unit,
+    private val onProfileClicked: (Int) -> Unit,
 ) : RecyclerView.Adapter<PostsAdapter.PostViewHolder>() {
 
     private val posts = mutableListOf<Post>()
@@ -72,7 +73,7 @@ class PostsAdapter(
         private val btnLike: ImageButton = itemView.findViewById(R.id.btnLike)
         private val btnComment: ImageButton = itemView.findViewById(R.id.btnComment)
         private val btnShare: ImageButton = itemView.findViewById(R.id.btnShare)
-        private val ivivProfileImage: ImageView = itemView.findViewById(R.id.ivProfileImage)
+        private val ivProfileImage: ImageView = itemView.findViewById(R.id.ivProfileImage)
 
 
         @SuppressLint("SetTextI18n")
@@ -94,10 +95,20 @@ class PostsAdapter(
             updateLikeButtonIcon(isLiked)
 
             Glide.with(itemView.context)
-                .load("https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                .load(
+                    post.author.profilePictureUrl
+                        ?: "https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
                 )
                 .circleCrop()
-                .into(ivivProfileImage)
+                .into(ivProfileImage)
+
+            ivProfileImage.setOnClickListener {
+                onProfileClicked(post.author.id)
+            }
+
+            tvAuthor.setOnClickListener {
+                onProfileClicked(post.author.id)
+            }
 
             btnMoreActions.setOnClickListener { view ->
                 val popupMenu = PopupMenu(itemView.context, view)

@@ -49,6 +49,18 @@ class HomeFragment : Fragment() {
             onShareClicked = { post ->
                 sharePost(post)
             },
+            onProfileClicked = { userId ->
+                val fragment = ProfileFragment().apply {
+                    arguments = Bundle().apply {
+                        putInt("USER_ID", userId)
+                    }
+                }
+
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainer, fragment)
+                    .addToBackStack(null)
+                    .commit()
+            }
         )
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())

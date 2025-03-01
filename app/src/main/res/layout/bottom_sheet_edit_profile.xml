@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Bouton Fermer -->
+        <ImageButton
+            android:id="@+id/btnClose"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="end"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_arrow_back" />
+
+        <!-- Photo de couverture -->
+        <ImageView
+            android:id="@+id/ivCoverPicture"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:scaleType="centerCrop" />
+
+        <!-- Photo de profil -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivProfilePicture"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="-40dp"
+            android:scaleType="centerCrop"
+            android:strokeColor="@android:color/white"
+            app:strokeWidth="2dp" />
+
+        <!-- Champs modifiables -->
+        <EditText
+            android:id="@+id/etFirstName"
+            style="@style/ProfileEditField"
+            android:hint="Prénom" />
+
+        <EditText
+            android:id="@+id/etLastName"
+            style="@style/ProfileEditField"
+            android:hint="Nom" />
+
+        <EditText
+            android:id="@+id/etBio"
+            style="@style/ProfileEditField"
+            android:hint="Bio" />
+
+        <EditText
+            android:id="@+id/etLocation"
+            style="@style/ProfileEditField"
+            android:hint="Localisation" />
+
+        <EditText
+            android:id="@+id/etWebsite"
+            style="@style/ProfileEditField"
+            android:hint="Site web" />
+
+        <EditText
+            android:id="@+id/etBirthDate"
+            style="@style/ProfileEditField"
+            android:hint="Date de naissance" />
+    </LinearLayout>
+</ScrollView>
