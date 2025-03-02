@@ -10,5 +10,5 @@ data class Post(
     @SerializedName("deleted") val deleted: Boolean = false,
     @SerializedName("parentPost") val parentPost: Post? = null,
     @SerializedName("comments") val comments: List<Post> = emptyList(),
-    @SerializedName("userHaveLiked") val userHaveLiked: List<User> = emptyList()
+    @SerializedName("userHaveLiked") var userHaveLiked: List<User> = emptyList()
 )

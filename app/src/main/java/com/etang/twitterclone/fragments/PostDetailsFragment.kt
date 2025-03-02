@@ -90,6 +90,14 @@ class PostDetailsFragment : Fragment() {
                 requireActivity().supportFragmentManager.popBackStack()
             }
         }
+        viewModel.likeSuccess.observe(viewLifecycleOwner) { success ->
+            if (success) {
+                Toast.makeText(requireContext(), "Like mis à jour", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Erreur lors du like", Toast.LENGTH_SHORT).show()
+            }
+        }
+
     }
 
     private fun displayPostDetails() {
@@ -102,6 +110,28 @@ class PostDetailsFragment : Fragment() {
 
         view?.findViewById<TextView>(R.id.tvHCreatedHour)?.text = createdHour
         view?.findViewById<TextView>(R.id.tvHCreatedDate)?.text = createdDate
+        view?.findViewById<TextView>(R.id.tvLikes)?.text = post.userHaveLiked.size.toString()
+        view?.findViewById<TextView>(R.id.tvComments)?.text = post.comments.size.toString()
+
+        btnLike = view?.findViewById(R.id.btnLike)!!
+        tvLikes = view?.findViewById(R.id.tvLikes)!!
+
+        // Initialisation du bouton Like
+        val currentUserId = sessionManager.getUserId()
+        isLiked = post.userHaveLiked.any { it.id == currentUserId }
+        updateLikeButtonIcon(isLiked)
+
+        btnLike.setOnClickListener {
+            viewModel.likePost(post.id, currentUserId)
+            isLiked = !isLiked
+            if (isLiked) {
+                tvLikes.text = "${post.userHaveLiked.size + 1}"
+            } else {
+                tvLikes.text = "${post.userHaveLiked.size - 1}"
+            }
+
+            updateLikeButtonIcon(isLiked)
+        }
     }
 
     private fun loadComments() {
@@ -110,6 +140,15 @@ class PostDetailsFragment : Fragment() {
 
     private fun likeComment(postId: Int) {
     }
+
+    private fun updateLikeButtonIcon(isLiked: Boolean) {
+        if (isLiked) {
+            btnLike.setImageResource(R.drawable.ic_favorite_filled24px)
+        } else {
+            btnLike.setImageResource(R.drawable.ic_favorite_outlined24px)
+        }
+    }
+
 
     private fun shareComment(comment: Post) {
         val shareIntent = Intent(Intent.ACTION_SEND).apply {

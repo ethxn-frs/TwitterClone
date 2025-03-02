@@ -192,7 +192,13 @@ class PostsAdapter(
 
             btnLike.setOnClickListener {
                 onLikeClicked(post.id)
+
                 val newIsLiked = !isLiked
+                if (isLiked) {
+                    tvLikes.text = "${post.userHaveLiked.size - 1}"
+                } else {
+                    tvLikes.text = "${post.userHaveLiked.size + 1}"
+                }
                 updateLikeButtonIcon(newIsLiked)
             }
 

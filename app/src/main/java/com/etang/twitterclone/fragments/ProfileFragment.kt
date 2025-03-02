@@ -15,6 +15,9 @@ import com.etang.twitterclone.repositories.UserRepository
 import com.etang.twitterclone.session.SessionManager
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
 
 class ProfileFragment : Fragment() {
 
@@ -76,8 +79,8 @@ class ProfileFragment : Fragment() {
         binding.tvBio.text = user.bio ?: ""
         binding.tvLocation.text = user.location ?: ""
         binding.tvWebsite.text = user.website ?: ""
-        binding.tvBirthdate.text = "🎂 " + user.birthDate
-        binding.tvJoinedDate.text = "📅 Inscrit le ${user.createdAt}"
+        binding.tvBirthdate.text = "🎂 " + formatDate(user.birthDate)
+        binding.tvJoinedDate.text = "📅 Inscrit le ${formatDate(user.createdAt)}"
         binding.tvFollowersCount.text = user.followersCount.toString()
         binding.tvFollowingCount.text = user.followingCount.toString()
 
@@ -102,6 +105,22 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    private fun formatDate(isoDate: String?): String {
+        return try {
+            if (isoDate.isNullOrEmpty()) return ""
+
+            val isoFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+            isoFormat.timeZone = TimeZone.getTimeZone("UTC")
+
+            val date = isoFormat.parse(isoDate)
+            val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+            date?.let { outputFormat.format(it) } ?: isoDate
+        } catch (e: Exception) {
+            isoDate ?: ""
+        }
+    }
+
     private fun setupEditProfileButton() {
         binding.btnFollow.text = "Modifier Profil"
         binding.btnFollow.setBackgroundColor(resources.getColor(android.R.color.holo_blue_light))
@@ -117,7 +136,7 @@ class ProfileFragment : Fragment() {
 
     private fun updateFollowButton() {
         if (isFollowing) {
-            binding.btnFollow.text = "Se désabonner"
+            binding.btnFollow.text = "Désabonner"
             binding.btnFollow.setBackgroundColor(resources.getColor(android.R.color.darker_gray))
         } else {
             binding.btnFollow.text = "Suivre"

@@ -127,6 +127,9 @@ class EditProfileFragment : Fragment() {
         setupFieldWatcher(
             binding.etBirthDate, binding.btnSaveBirthDate, binding.btnCancelBirthDate, "birthDate"
         )
+        setupFieldWatcher(
+            binding.etLocation, binding.btnSaveLocation, binding.btnCancelLocation, "location"
+        )
     }
 
     private fun setupFieldWatcher(

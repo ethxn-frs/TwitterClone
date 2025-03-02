@@ -56,6 +56,7 @@ class PostViewModel : ViewModel() {
         viewModelScope.launch {
             val result = repository.likePost(postId, userId)
             _likeSuccess.value = result
+            _likeSuccess.postValue(result)
         }
     }
 }
