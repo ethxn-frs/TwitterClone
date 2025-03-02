@@ -5,6 +5,9 @@ import com.etang.twitterclone.network.RetrofitClient
 import com.etang.twitterclone.network.services.MarkMessageSeenRequest
 import com.etang.twitterclone.network.services.MessageDataService
 import com.etang.twitterclone.network.services.SendMessageRequest
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 
 class MessageRepository() {
 
@@ -28,15 +31,16 @@ class MessageRepository() {
         }
     }
 
-    suspend fun sendMessage(conversationId: Int, userId: Int, content: String): Message {
-        val request = SendMessageRequest(conversationId, userId, content)
-        val response = service.sendMessage(request)
-        if (response.isSuccessful) {
-            return response.body()!!
-        } else {
-            throw Exception("Failed to send message")
+    fun sendMessage(conversationId: Int, userId: Int, content: String): Deferred<Message> =
+        GlobalScope.async {
+            val request = SendMessageRequest(conversationId, userId, content)
+            val response = service.sendMessage(request)
+            if (response.isSuccessful) {
+                return@async response.body()!!
+            } else {
+                throw Exception("Failed to send message")
+            }
         }
-    }
 
     suspend fun markMessageAsSeen(messageId: Int, userId: Int) {
         val request = MarkMessageSeenRequest(userId)
@@ -44,5 +48,21 @@ class MessageRepository() {
         if (!response.isSuccessful) {
             throw Exception("Failed to mark message as seen")
         }
+    }
+
+    suspend fun deleteMessageAsSeen(messageId: Int, userId: Int) {
+        val request = MarkMessageSeenRequest(userId)
+        val response = service.deleteMessageAsSeen(messageId, request)
+        if (!response.isSuccessful) {
+            throw Exception("Failed to mark message as seen")
+        }
+    }
+
+    suspend fun deleteMessageId(messageId: Int): Boolean {
+        val response = service.deleteMessageId(messageId)
+        if (!response.isSuccessful) {
+            throw Exception("Failed to mark message as seen")
+        }
+        return true
     }
 }

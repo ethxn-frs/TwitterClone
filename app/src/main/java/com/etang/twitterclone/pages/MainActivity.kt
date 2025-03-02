@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.etang.twitterclone.R
 import com.etang.twitterclone.databinding.ActivityMainBinding
+import com.etang.twitterclone.fragments.ConversationsFragment
 import com.etang.twitterclone.fragments.HomeFragment
 import com.etang.twitterclone.fragments.ProfileFragment
 import com.etang.twitterclone.fragments.SearchFragment
@@ -193,7 +194,9 @@ class MainActivity : AppCompatActivity() {
             R.id.menu_notifications -> { /* À implémenter plus tard */
             }
 
-            R.id.menu_messages -> { /* À implémenter plus tard */
+            R.id.navigation_messages -> {
+                updateTopBar("Conversations", R.drawable.ic_mail_24px)
+                loadFragment(ConversationsFragment())
             }
 
             R.id.menu_profile -> loadFragment(ProfileFragment())

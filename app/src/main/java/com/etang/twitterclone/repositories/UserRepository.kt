@@ -6,6 +6,9 @@ import com.etang.twitterclone.data.model.User
 import com.etang.twitterclone.network.RetrofitClient
 import com.etang.twitterclone.network.dto.SearchRequestDto
 import com.etang.twitterclone.network.services.UserDataService
+import com.etang.twitterclone.network.services.UsernameSearchRequest
+import com.google.gson.Gson
+import com.google.gson.JsonElement
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType
@@ -193,6 +196,69 @@ class UserRepository {
                 }
             response.isSuccessful
         } catch (e: Exception) {
+            false
+        }
+    }
+
+    suspend fun searchUserByUsername(username: String): User? {
+        val request = UsernameSearchRequest(username)
+        val response: Response<List<User>> = userDataService.searchUser(request)
+        Log.d("UserRepository", "Response code: ${response.code()}, body: ${response.body()}")
+        return if (response.isSuccessful) {
+            val users = response.body()
+            if (!users.isNullOrEmpty()) users[0] else null
+        } else {
+            null
+        }
+    }
+
+    suspend fun isFollowingUser(creatorId: Int, targetId: Int): Boolean {
+        val response: Response<List<User>> = userDataService.getUserFollowing(creatorId)
+        return if (response.isSuccessful) {
+            val followingList = response.body() ?: emptyList()
+            followingList.any { it.id == targetId }
+        } else {
+            false
+        }
+    }
+
+    suspend fun getUserFollowing(creatorId: Int): List<User>? {
+        val response: Response<List<User>> = userDataService.getUserFollowing(creatorId)
+        return if (response.isSuccessful) {
+            response.body()
+        } else {
+            null
+        }
+
+    }
+
+    suspend fun getAllUsers(): List<User> {
+        val response: Response<JsonElement> = userDataService.getAllUsers()
+        if (response.isSuccessful) {
+            val jsonElement = response.body()
+            if (jsonElement != null && jsonElement.isJsonArray) {
+                val jsonArray = jsonElement.asJsonArray
+                if (jsonArray.size() > 0) {
+                    val usersJson = jsonArray[0]
+                    return Gson().fromJson(
+                        usersJson,
+                        object : com.google.gson.reflect.TypeToken<List<User>>() {}.type
+                    )
+
+                }
+            }
+            return emptyList()
+        } else {
+            throw Exception("Failed to fetch all users")
+        }
+    }
+
+    suspend fun isUserFollowingCreator(creatorId: Int, userId: Int): Boolean {
+        val response: Response<List<User>> = userDataService.getUserFollowers(creatorId)
+        return if (response.isSuccessful) {
+            val followers = response.body() ?: emptyList()
+            followers.any { it.id == userId }
+        } else {
             false
         }
     }

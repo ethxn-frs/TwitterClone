@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.androidx.swiperefreshlayout)
 
     implementation("com.google.android.material:material:1.10.0")
+    implementation(libs.firebase.crashlytics.buildtools)
 
 
     testImplementation(libs.junit)

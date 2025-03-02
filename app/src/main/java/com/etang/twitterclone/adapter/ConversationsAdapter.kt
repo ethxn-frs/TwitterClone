@@ -1,5 +1,6 @@
+package com.etang.twitterclone.adapter
+
 import android.annotation.SuppressLint
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,48 +10,105 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.etang.twitterclone.R
 import com.etang.twitterclone.data.model.Conversation
+import com.etang.twitterclone.session.SessionManager
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
+import java.util.concurrent.TimeUnit
 
 class ConversationsAdapter(
-    private val context: Context, private var conversations: List<Conversation>
-) : RecyclerView.Adapter<ConversationsAdapter.ViewHolder>() {
+    private val onConversationClicked: (Conversation) -> Unit,
+    private val sessionManager: SessionManager
+) : RecyclerView.Adapter<ConversationsAdapter.ConversationsViewHolder>() {
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val profileImageView: ImageView = itemView.findViewById(R.id.profileImageView)
-        val userNameTextView: TextView = itemView.findViewById(R.id.usernameTextView)
-        var handleTextView: TextView = itemView.findViewById(R.id.handleTextView)
-        var lastMessageTextView: TextView = itemView.findViewById(R.id.lastMessageTextView)
-        var timeStampTextView: TextView = itemView.findViewById(R.id.timestampTextView)
+    private val conversations = mutableListOf<Conversation>()
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ConversationsViewHolder {
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.item_conversations, parent, false)
+        return ConversationsViewHolder(view)
     }
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup, viewType: Int
-    ): ViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.item_conversations, parent, false)
-        return ViewHolder(view)
+    override fun onBindViewHolder(holder: ConversationsViewHolder, position: Int) {
+        holder.bind(conversations[position])
     }
 
-    @SuppressLint("SetTextI18n")
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val conversation = conversations[position]
-        Glide.with(context).load("zbi").placeholder(R.drawable.ic_profile)
-            .error(R.drawable.ic_profile).into(holder.profileImageView)
+    override fun getItemCount(): Int = conversations.size
 
-        holder.userNameTextView.text = conversation.name
-        holder.handleTextView.text = "@${conversation.users.get(0).username}"
-        holder.lastMessageTextView.text =
-            conversation.messages.get(conversation.messages.size - 1).content
-        holder.timeStampTextView.text = conversation.createdAt
-    }
-
-    override fun getItemCount(): Int {
-        return conversations.size
-    }
-
-    fun updateData(newConversations: List<Conversation>) {
-        conversations = newConversations
+    @SuppressLint("NotifyDataSetChanged")
+    fun submitList(newList: List<Conversation>) {
+        conversations.clear()
+        conversations.addAll(newList)
         notifyDataSetChanged()
-
     }
 
+    inner class ConversationsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val profileImageView: ImageView = itemView.findViewById(R.id.profileImageView)
+        private val userNameTextView: TextView = itemView.findViewById(R.id.usernameTextView)
+        private val lastMessageTextView: TextView = itemView.findViewById(R.id.lastMessageTextView)
+        private val timestampTextView: TextView = itemView.findViewById(R.id.timestampTextView)
+
+        fun bind(conversation: Conversation) {
+            val currentUserId = sessionManager.getUserId()
+
+            val participants = conversation.users.filter { it.id != currentUserId }
+
+            val conversationName = when (participants.size){
+                1 -> participants.firstOrNull()?.username
+                else -> participants.joinToString(", ") {it.username}
+
+            }
+            userNameTextView.text = conversationName
+
+            // Charger la dernière conversation
+            lastMessageTextView.text = if (conversation.messages.isNotEmpty()) {
+                conversation.messages.last().content
+            } else {
+                "Aucun message"
+            }
+
+            timestampTextView.text = formatTimeAgo(conversation.createdAt)
+
+            Glide.with(itemView.context)
+                .load(R.drawable.ic_profile)
+                .circleCrop()
+                .into(profileImageView)
+
+            itemView.setOnClickListener {
+                onConversationClicked(conversation)
+            }
+        }
+    }
+
+    fun formatTimeAgo(createdAt: String): String {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        dateFormat.timeZone = TimeZone.getTimeZone("UTC")
+
+        return try {
+            val createdDate = dateFormat.parse(createdAt) ?: Date()
+            val now = Date()
+            val diffInMillis = now.time - createdDate.time
+
+            when {
+                diffInMillis < TimeUnit.MINUTES.toMillis(1) -> "${diffInMillis / 1000}s"
+                diffInMillis < TimeUnit.HOURS.toMillis(1) -> "${diffInMillis / 1000 / 60}m"
+                diffInMillis < TimeUnit.DAYS.toMillis(1) -> "${diffInMillis / 1000 / 60 / 60}h"
+                diffInMillis < TimeUnit.DAYS.toMillis(7) -> "${diffInMillis / 1000 / 60 / 60 / 24}j"
+                else -> SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(createdDate)
+            }
+        } catch (e: Exception) {
+            "inconnu"
+        }
+    }
+
+    fun updateConversation(conversation: Conversation?) {
+        val index = conversations.indexOfFirst { it.id == conversation?.id  }
+        if(index != -1){
+            if (conversation != null) {
+                conversations[index] = conversation
+            }
+            notifyItemChanged(index)
+        }
+    }
 }

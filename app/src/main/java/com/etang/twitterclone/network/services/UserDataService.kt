@@ -1,8 +1,10 @@
 package com.etang.twitterclone.network.services
 
+import com.etang.twitterclone.data.model.Message
 import com.etang.twitterclone.data.model.Post
 import com.etang.twitterclone.data.model.User
 import com.etang.twitterclone.network.dto.SearchRequestDto
+import com.google.gson.JsonElement
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -73,6 +75,32 @@ interface UserDataService {
         @Path("userId") userId: Int,
         @Part file: MultipartBody.Part?
     ): Response<Void>
+
+    @POST("users/username/search")
+    suspend fun searchUser(
+        @Body request: UsernameSearchRequest
+    ): Response<List<User>>
+
+
+    @GET("users/{id}/following")
+    suspend fun getUserFollowing(
+        @Path("id") idUser: Int
+    ): Response<List<User>>
+
+    @GET("users/{id}/messages")
+    suspend fun getUserMessages(
+        @Path("id") idUser: Int
+    ): Response<List<Message>>
+
+    @PUT("unfollow")
+    suspend fun unFollowUser(
+        @Body request: UnfollowUser
+    ): Response<Unit>
+
+    @GET("users")
+    suspend fun getAllUsers(): Response<JsonElement>
 }
 
 data class IsFollowingResponse(val isFollowing: Boolean)
+data class UsernameSearchRequest(val username: String)
+data class UnfollowUser(val followerId: Int, val followingId: Int)

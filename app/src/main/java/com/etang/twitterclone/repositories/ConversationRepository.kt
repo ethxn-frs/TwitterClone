@@ -1,5 +1,6 @@
 package com.etang.twitterclone.repositories
 
+import android.util.Log
 import com.etang.twitterclone.data.model.Conversation
 import com.etang.twitterclone.network.RetrofitClient
 import com.etang.twitterclone.network.services.ConversationDataService
@@ -14,6 +15,7 @@ class ConversationRepository() {
     suspend fun createConversation(creatorId: Int, participantIds: List<Int>): Conversation {
         val request = CreateConversationRequest(creatorId, participantIds)
         val response = service.createConversation(request)
+        Log.d("Creator + participantsIds", creatorId.toString() + participantIds.toString())
         if (response.isSuccessful) {
             return response.body()!!
         } else {
@@ -30,11 +32,37 @@ class ConversationRepository() {
         }
     }
 
-    suspend fun removeUserFromConversation(conversationId: Int, userId: Int) {
+    suspend fun getConversationById(conversationId: Int): Conversation {
+        val response = service.getConversationById(conversationId)
+        if (response.isSuccessful) {
+            return response.body()!!
+        } else {
+            throw Exception("Failed to fetch conversation details")
+        }
+    }
+
+    suspend fun addUserFromConversation(conversationId: Int, userId: Int) {
+        val request = UserConversationRequest(userId)
+        val response = service.addUserFromConversation(conversationId, request)
+        if (!response.isSuccessful) {
+            throw Exception("Echec de l'ajout de l'utilisateur")
+        }
+    }
+
+    suspend fun removeUserFromConversation(conversationId: Int, userId: Int): Conversation {
         val request = UserConversationRequest(userId)
         val response = service.removeUserFromConversation(conversationId, request)
         if (!response.isSuccessful) {
-            throw Exception("Failed to remove user from conversation")
+            throw Exception("Echec de la suppression de l'utilisateur")
         }
+        return response.body()!!
+    }
+
+    suspend fun deleteConversationById(conversationId: Int): Boolean {
+        val response = service.deleteConversationById(conversationId)
+        if (response.isSuccessful) {
+            return true
+        }
+        return false
     }
 }
