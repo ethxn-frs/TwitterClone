@@ -49,11 +49,20 @@ class ConversationRepository() {
         }
     }
 
-    suspend fun removeUserFromConversation(conversationId: Int, userId: Int){
+    suspend fun removeUserFromConversation(conversationId: Int, userId: Int): Conversation{
         val request = UserConversationRequest(userId)
         val response = service.removeUserFromConversation(conversationId, request)
         if(!response.isSuccessful){
             throw Exception("Echec de la suppression de l'utilisateur")
         }
+        return response.body()!!
+    }
+
+    suspend fun deleteConversationById(conversationId: Int): Boolean{
+        val response = service.deleteConversationById(conversationId)
+        if(response.isSuccessful){
+            return true
+        }
+        return false
     }
 }

@@ -1,9 +1,11 @@
 package com.etang.twitterclone.adapter
 
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
@@ -15,8 +17,7 @@ import java.util.Locale
 import java.util.TimeZone
 
 class MessagesAdapter(
-    private val currentUserId: Int,
-    private val otherParticipantName: String
+    private val currentUserId: Int
 ) : RecyclerView.Adapter<MessagesAdapter.MessageViewHolder>(){
 
     companion object{
@@ -32,8 +33,6 @@ class MessagesAdapter(
             null
         }
         val messageContentTextView: TextView = itemView.findViewById(R.id.messageContent)
-        val btnReaction: ImageView = itemView.findViewById(R.id.btnReaction)
-        val tvReaction: TextView = itemView.findViewById(R.id.tvReaction)
         val tvMessageInfo: TextView = itemView.findViewById(R.id.tvMessageInfo)
         val tvSeenStatus: TextView = itemView.findViewById(R.id.tvSeenStatus)
     }
@@ -70,43 +69,15 @@ class MessagesAdapter(
         holder.tvMessageInfo?.text = "$authorName ($formattedDate)"
         holder.messageContentTextView.text = message.content
 
-        holder.btnReaction.setOnClickListener { view ->
-            showEmoji(view, holder, message)
-        }
-
-        holder.tvReaction.text = message.reaction ?: ""
-
-        val totalParticipants = messages.size
-        val otherParticipants = totalParticipants - 1
-        val seenByOthersThanCreator = message.seenBy.count {it.id != message.author.id }
+        val totalParticipantsWhoSeenMessage = message.seenBy.count {it.id != message.author.id}
+        val otherParticipants = message.author.username.count()
 
         holder.tvSeenStatus.text = when {
-            seenByOthersThanCreator == otherParticipants -> "Vu par tout le monde"
-            seenByOthersThanCreator > 0 -> "Vu par un utilisateur"
+            totalParticipantsWhoSeenMessage == 0 -> ""
+            totalParticipantsWhoSeenMessage == otherParticipants -> "Vu par tout le monde"
+            totalParticipantsWhoSeenMessage > 0 -> "Vu par un utilisateur"
             else -> ""
         }
-
-    }
-
-    private fun showEmoji(
-        view: View?,
-        holder: MessageViewHolder,
-        message: Message
-    ) {
-        val popUpMenu = PopupMenu(view?.context, view)
-        val emojis = listOf("👍", "❤️", "😂", "😮", "😢", "😡")
-        for (emoji in emojis){
-            popUpMenu.menu.add(emoji)
-        }
-
-        popUpMenu.setOnMenuItemClickListener { item->
-            val selectedEmoji = item.title.toString()
-            message.reaction = selectedEmoji
-            holder.tvReaction.text = selectedEmoji
-            notifyDataSetChanged()
-            true
-        }
-        popUpMenu.show()
 
     }
 

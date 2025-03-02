@@ -13,7 +13,7 @@ class MessagesViewModel() : ViewModel() {
 
     private val repository = MessageRepository()
 
-    val _messages = MutableLiveData<List<Message>>()
+    private val _messages = MutableLiveData<List<Message>>()
     val messages: LiveData<List<Message>> = _messages
 
     fun loadMessagesInConversation(conversationId: Int) {
@@ -47,4 +47,24 @@ class MessagesViewModel() : ViewModel() {
             }
         }
     }
+
+    fun deleteMessageById(messageId: Int) {
+        viewModelScope.launch {
+            try {
+                repository.deleteMessageId(messageId)
+            } catch (e: Exception) {
+
+            }
+        }
+    }
+    fun deleteMessageAsSeen(messageId: Int, userId: Int) {
+        viewModelScope.launch {
+            try {
+                repository.deleteMessageAsSeen(messageId, userId)
+            } catch (e: Exception) {
+
+            }
+        }
+    }
+
 }

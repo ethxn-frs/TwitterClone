@@ -27,7 +27,9 @@ import kotlinx.coroutines.launch
 
 class CreateConversationActivity : AppCompatActivity() {
 
-    private val conversationViewModel: ConversationViewModel by viewModels()
+    private val conversationViewModel: ConversationViewModel by viewModels{
+        ConversationViewModelFactory(SessionManager(this))
+    }
     private val userViewModel: UserViewModel by viewModels()
 
     private lateinit var sessionManager: SessionManager

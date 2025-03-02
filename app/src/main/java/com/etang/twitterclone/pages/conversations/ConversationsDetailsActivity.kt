@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.etang.twitterclone.R
 import com.etang.twitterclone.adapter.MessagesAdapter
 import com.etang.twitterclone.data.model.Conversation
+import com.etang.twitterclone.data.model.Message
 import com.etang.twitterclone.data.model.User
 import com.etang.twitterclone.session.SessionManager
 import com.etang.twitterclone.viewmodel.ConversationViewModel
@@ -80,7 +81,7 @@ class ConversationsDetailsActivity : AppCompatActivity() {
         tvHeaderTitle.text = "Message"
 
         recyclerViewMessages = findViewById(R.id.recyclerViewMessages)
-        messagesAdapter = MessagesAdapter(currentUserId, "Inconnu")
+        messagesAdapter = MessagesAdapter(currentUserId)
         val layoutManager = LinearLayoutManager(this)
         layoutManager.stackFromEnd = true
         recyclerViewMessages.layoutManager = layoutManager
@@ -100,7 +101,18 @@ class ConversationsDetailsActivity : AppCompatActivity() {
         }
 
         observeConversationDetails()
-        observeMessages()
+        messagesViewModel.messages.observe(this) { messages ->
+            messagesAdapter.submitList(messages)
+            messages.forEach { message ->
+                if(!message.seenBy.any{it.id == sessionManager.getUserId()}) {
+                    messagesViewModel.markMessageAsSeen(message.id, sessionManager.getUserId())
+                }
+            }
+
+            recyclerViewMessages.post {
+                recyclerViewMessages.scrollToPosition(messages.size -1)
+            }
+        }
         conversationViewModel.fetchConversationById(conversationId, currentUserId)
 
     }
@@ -112,6 +124,8 @@ class ConversationsDetailsActivity : AppCompatActivity() {
                 conversation = conv
                 displayConversationDetails()
                 loadMessages()
+
+                markUnreadMessagesAsSeen()
             }else{
                 Toast.makeText(this, "Failed to load conversation details", Toast.LENGTH_SHORT).show()
                 finish()
@@ -122,17 +136,6 @@ class ConversationsDetailsActivity : AppCompatActivity() {
                 Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
             }
         }
-    }
-
-    private fun observeMessages(){
-        messagesViewModel.messages.observe(this){ messages ->
-            Log.d("MessagesDebug", "Messages affichés: ${messages.map { it.content }}")
-            messagesAdapter.submitList(messages)
-            recyclerViewMessages.post{
-                recyclerViewMessages.scrollToPosition(messages.size - 1)
-            }
-        }
-
     }
 
     @SuppressLint("SetTextI18n")
@@ -197,6 +200,17 @@ class ConversationsDetailsActivity : AppCompatActivity() {
         popupMenu.show()
     }
 
+    private fun markUnreadMessagesAsSeen() {
+        val currentUserId = sessionManager.getUserId()
+
+        conversation.messages.forEach { message ->
+            if (!message.seenBy.any { it.id == currentUserId }) {
+                messagesViewModel.markMessageAsSeen(message.id, currentUserId)
+            }
+        }
+    }
+
+
     private fun showAddUserDialog(conversationId: Int){
         val input = EditText(this)
         input.hint = "Nom d'utilisateur"
@@ -218,13 +232,15 @@ class ConversationsDetailsActivity : AppCompatActivity() {
     }
 
     private fun showRemoveUserDialog(conversationId: Int) {
-        val participants = conversation.users.map { it.username }.toTypedArray()
+        val filteredParticipants = conversation.users.filter { it.id != sessionManager.getUserId() }
+        val participantsUsernames = filteredParticipants.map { it.username }.toTypedArray()
+
 
         AlertDialog.Builder(this)
             .setTitle("Supprimer un utilisateur")
-            .setSingleChoiceItems(participants, -1) { dialog, which ->
-                val selectedUser = conversation.users[which]
-                removeUserFromConversation(conversationId, selectedUser.id)
+            .setSingleChoiceItems(participantsUsernames, -1) { dialog, which ->
+                val selectedUser = filteredParticipants[which]
+                removeUserFromConversation(conversationId, selectedUser)
                 dialog.dismiss()
             }
             .setNegativeButton("Annuler", null)
@@ -237,7 +253,6 @@ class ConversationsDetailsActivity : AppCompatActivity() {
                 val user = userViewModel.searchUserByName(username)
                 if (user != null) {
                     conversationViewModel.addUserToConversation(conversationId, user.id, username)
-                    Toast.makeText(this@ConversationsDetailsActivity, "$username a été ajouté", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(this@ConversationsDetailsActivity, "Utilisateur introuvable", Toast.LENGTH_SHORT).show()
                 }
@@ -247,10 +262,10 @@ class ConversationsDetailsActivity : AppCompatActivity() {
         }
     }
 
-    private fun removeUserFromConversation(conversationId: Int, userId: Int) {
+    private fun removeUserFromConversation(conversationId: Int, user: User) {
         lifecycleScope.launch {
             try {
-                conversationViewModel.removeUserFromConversation(conversationId, userId)
+                conversationViewModel.removeUserFromConversation(conversationId, user)
                 Toast.makeText(this@ConversationsDetailsActivity, "Utilisateur supprimé", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 Toast.makeText(this@ConversationsDetailsActivity, "Erreur : ${e.message}", Toast.LENGTH_SHORT).show()

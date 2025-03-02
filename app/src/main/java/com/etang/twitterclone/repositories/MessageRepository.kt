@@ -49,4 +49,19 @@ class MessageRepository() {
             throw Exception("Failed to mark message as seen")
         }
     }
+
+    suspend fun deleteMessageAsSeen(messageId: Int, userId: Int) {
+        val request = MarkMessageSeenRequest(userId)
+        val response = service.deleteMessageAsSeen(messageId, request)
+        if (!response.isSuccessful) {
+            throw Exception("Failed to mark message as seen")
+        }
+    }
+    suspend fun deleteMessageId(messageId: Int): Boolean {
+        val response = service.deleteMessageId(messageId)
+        if (!response.isSuccessful) {
+            throw Exception("Failed to mark message as seen")
+        }
+        return true
+    }
 }

@@ -3,6 +3,7 @@ package com.etang.twitterclone.network.services
 import com.etang.twitterclone.data.model.Message
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -28,6 +29,17 @@ interface MessageDataService {
     suspend fun markMessageAsSeen(
         @Path("id") messageId: Int,
         @Body request: MarkMessageSeenRequest
+    ): Response<Unit>
+
+    @DELETE("/messages/seenBy/{id}")
+    suspend fun deleteMessageAsSeen(
+        @Path("id") messageId: Int,
+        @Body request: MarkMessageSeenRequest
+    ): Response<Unit>
+
+    @DELETE("/messages/{id}")
+    suspend fun deleteMessageId(
+        @Path("id") messageId: Int,
     ): Response<Unit>
 }
 

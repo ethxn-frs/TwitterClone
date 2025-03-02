@@ -11,10 +11,12 @@ import com.etang.twitterclone.repositories.UserRepository
 import com.etang.twitterclone.session.SessionManager
 import kotlinx.coroutines.launch
 
-class ConversationViewModel(private val sessionManager: SessionManager) : ViewModel() {
+class ConversationViewModel(
+    private val sessionManager: SessionManager,
+    private val conversationRepository :ConversationRepository,
+    private val userRepository: UserRepository) : ViewModel() {
 
-    private val conversationRepository = ConversationRepository()
-    private val userRepository = UserRepository()
+    private val messagesViewModel: MessagesViewModel = MessagesViewModel()
 
     private val _userConversations = MutableLiveData<List<Conversation>>()
     val userConversations: LiveData<List<Conversation>> get() = _userConversations
@@ -151,6 +153,7 @@ class ConversationViewModel(private val sessionManager: SessionManager) : ViewMo
                     return@launch
                 }
                 conversationRepository.addUserFromConversation(conversationId, userId)
+
                 fetchConversationById(conversationId, sessionManager.getUserId())
             } catch (e: Exception) {
                 _error.postValue("Erreur lors de l'ajout : ${e.message}")
@@ -171,11 +174,29 @@ class ConversationViewModel(private val sessionManager: SessionManager) : ViewMo
         }
         return false
     }
-    fun removeUserFromConversation(conversationId: Int, userId: Int) {
+
+    fun removeUserFromConversation(conversationId: Int, user: User) {
         viewModelScope.launch {
             try {
-                conversationRepository.removeUserFromConversation(conversationId, userId)
-                fetchConversationById(conversationId, sessionManager.getUserId())
+                val conversation = conversationRepository.getConversationById(conversationId)
+
+                conversation.messages.forEach { message ->
+                    messagesViewModel.deleteMessageAsSeen(message.id, user.id)
+                }
+                conversationRepository.removeUserFromConversation(conversationId, user.id)
+                val newConv = conversationRepository.getConversationById(conversationId)
+                conversation.messages.forEach { message ->
+                    if(message.author.username.contains(user.username)){
+                        messagesViewModel.deleteMessageById(message.id)
+                    }
+                }
+                if(newConv.users.size <= 1){
+                    conversationRepository.deleteConversationById(newConv.id)
+                    _conversationDetails.postValue(null)
+                }else{
+                    fetchConversationById(newConv.id, sessionManager.getUserId())
+                }
+
             } catch (e: Exception) {
                 _error.postValue("Erreur lors de la suppression : ${e.message}")
             }

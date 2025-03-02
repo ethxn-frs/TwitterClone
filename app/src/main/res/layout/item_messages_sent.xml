@@ -15,13 +15,14 @@
         android:textSize="12sp"
         android:textColor="@android:color/darker_gray"
         android:layout_marginBottom="4dp"/>
+
     <TextView
         android:id="@+id/messageContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/message_sent_bg"
+        android:background="@color/white"
         android:padding="8dp"
-        android:textColor="@android:color/white"/>
+        android:textColor="@android:color/darker_gray"/>
 
     <TextView
         android:id="@+id/tvSeenStatus"
@@ -31,22 +32,6 @@
         android:textSize="12sp"
         android:layout_marginTop="2dp"/>
 
-    <ImageView
-        android:id="@+id/btnReaction"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginTop="4dp"/>
-    <TextView
-        android:id="@+id/tvReaction"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/holo_blue_light"
-        android:textSize="14sp" />
-    <ImageButton
-        android:id="@+id/btnReactConversation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Réagir" />
+
 
 </LinearLayout>
