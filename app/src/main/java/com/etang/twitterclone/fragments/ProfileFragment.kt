@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.etang.twitterclone.R
 import com.etang.twitterclone.adapter.ProfilePagerAdapter
 import com.etang.twitterclone.data.dto.UserProfileDto
 import com.etang.twitterclone.databinding.FragmentProfileBinding
@@ -88,18 +89,31 @@ class ProfileFragment : Fragment() {
             user.profilePictureUrl
                 ?: "https://img.lapresse.ca/435x290/201704/03/1378798-nouvelle-image-defaut-ressemble-davantage.jpg"
         ).into(binding.ivProfilePicture)
+
+        binding.tvFollowersCount.setOnClickListener {
+            openFollowersFollowingFragment(user.id, "followers")
+        }
+        binding.tvFollowersCount.setOnClickListener {
+            openFollowersFollowingFragment(user.id, "followers")
+        }
+
+        binding.tvFollowingCount.setOnClickListener {
+            openFollowersFollowingFragment(user.id, "following")
+        }
     }
 
     private fun setupEditProfileButton() {
         binding.btnFollow.text = "Modifier Profil"
         binding.btnFollow.setBackgroundColor(resources.getColor(android.R.color.holo_blue_light))
         binding.btnFollow.setOnClickListener {
-            val bottomSheet = EditProfileBottomSheet {
-                fetchUserProfile(userId) // Réactualiser le profil après modification
-            }
-            bottomSheet.show(parentFragmentManager, "EditProfileBottomSheet")
+            val fragment = EditProfileFragment()
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, fragment)
+                .addToBackStack(null)
+                .commit()
         }
     }
+
 
     private fun updateFollowButton() {
         if (isFollowing) {
@@ -109,6 +123,16 @@ class ProfileFragment : Fragment() {
             binding.btnFollow.text = "Suivre"
             binding.btnFollow.setBackgroundColor(resources.getColor(android.R.color.holo_blue_light))
         }
+    }
+
+    private fun openFollowersFollowingFragment(userId: Int, type: String) {
+
+        val fragment = FollowersFollowingFragment.newInstance(userId, type)
+
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun handleFollowUnfollow() {

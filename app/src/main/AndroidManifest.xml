@@ -2,6 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -25,14 +33,13 @@
 
         <activity android:name=".pages.AuthActivity" />
         <activity android:name=".pages.HomeActivity" />
-        <activity android:name=".pages.post.PostDetailsActivity" />
 
         <activity
             android:name=".pages.post.CreatePostActivity"
             android:exported="true" />
 
     </application>
-    
+
     <uses-permission
         android:name="android.permission.INTERNET"
         tools:ignore="ManifestOrder" />

@@ -20,6 +20,9 @@ interface PostDataService {
     @GET("/posts")
     suspend fun getPosts(): Response<List<Post>>
 
+    @GET("/posts/following/{userId}")
+    suspend fun getFollowingPosts(@Path("userId") userId: Int): Response<List<Post>>
+
     @PUT("posts/{id}/like")
     suspend fun likePost(
         @Path("id") postId: Int, @Body userId: Map<String, Int>

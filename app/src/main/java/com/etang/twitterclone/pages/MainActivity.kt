@@ -196,9 +196,6 @@ class MainActivity : AppCompatActivity() {
             R.id.menu_messages -> { /* À implémenter plus tard */
             }
 
-            R.id.menu_bookmarks -> { /* À implémenter plus tard */
-            }
-
             R.id.menu_profile -> loadFragment(ProfileFragment())
             R.id.menu_settings -> loadFragment(SettingsFragment())
 

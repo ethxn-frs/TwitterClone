@@ -40,6 +40,19 @@ class PostRepository {
         }
     }
 
+    suspend fun getFollowingPosts(userId: Int): List<Post> {
+        return try {
+            val response = postDataService.getFollowingPosts(userId)
+            if (response.isSuccessful) {
+                response.body() ?: emptyList()
+            } else {
+                emptyList()
+            }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
     suspend fun likePost(postId: Int, userId: Int): Boolean {
         return try {
             val response = postDataService.likePost(postId, mapOf("userId" to userId))

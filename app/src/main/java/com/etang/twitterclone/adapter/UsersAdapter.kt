@@ -41,12 +41,14 @@ class UsersAdapter(private val onUserClicked: (userId: Int) -> Unit) :
             tvUsername.text = "@${user.username}"
             tvFullName.text = "${user.firstName} ${user.lastName}"
 
-            // Charger l'image de profil avec Glide (placeholder si pas d'image)
             Glide.with(itemView.context)
-                //.load(user.profileImageUrl ?: R.drawable.default_profile)
-                .load("XX")
+                .load(
+                    user.profilePictureUrl
+                        ?: "https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png"
+                )
                 .circleCrop()
                 .into(ivProfilePic)
+
 
             itemView.setOnClickListener { onUserClicked(user.id) }
         }

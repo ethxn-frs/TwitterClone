@@ -45,11 +45,17 @@ class PostViewModel : ViewModel() {
         }
     }
 
+    fun fetchFollowingPosts(userId: Int) {
+        viewModelScope.launch {
+            val fetchedPosts = repository.getFollowingPosts(userId)
+            _posts.value = fetchedPosts
+        }
+    }
+
     fun likePost(postId: Int, userId: Int) {
         viewModelScope.launch {
             val result = repository.likePost(postId, userId)
             _likeSuccess.value = result
         }
     }
-
 }
